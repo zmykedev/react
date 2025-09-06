@@ -8,14 +8,11 @@ import {
   Typography, 
   Card, 
   Space, 
-  Alert,
   Divider,
   Row,
   Col,
   Avatar,
   Progress,
-  Checkbox,
-  Tooltip
 } from 'antd';
 import {
   UserOutlined,
@@ -27,11 +24,9 @@ import {
   CloseCircleOutlined
 } from '@ant-design/icons';
 import { API_ENDPOINTS } from '../../config/api';
-import { z } from 'zod';
-import { DebugInfo } from '../../components/DebugInfo';
 
 const { Content } = Layout;
-const { Title, Text, Link } = Typography;
+const { Title, Text} = Typography;
 const { Password } = Input;
 
 interface FormData {
@@ -144,12 +139,10 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Layout className="min-h-screen bg-gradient-to-br from-fountain-blue-50 to-fountain-blue-100">
-      <DebugInfo />
-      <Content className="flex items-center justify-center py-8 px-4">
+    <Layout className="bg-gradient-to-br from-fountain-blue-50 to-fountain-blue-100">
+      <Content className="flex items-stretch justify-center min-h-screen py-4 px-4">
         <Card 
-          className="w-full max-w-2xl shadow-2xl border-0"
-          bodyStyle={{ padding: '40px' }}
+          className="shadow-2xl border-0 flex-grow-0 max-w-md w-full h-full"
         >
           {/* Header */}
           <div className="text-center mb-8">

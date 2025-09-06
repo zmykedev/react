@@ -4,7 +4,7 @@ export interface User {
     role: string;
     firstName: string;
     lastName: string;
-    createdAt: string;    // ISO string, más fácil de manejar en frontend
+    createdAt: string; 
     updatedAt: string;
     lastLoginAt?: string;
   }
@@ -13,8 +13,8 @@ export interface User {
     accessToken: string;
     refreshToken: string;
     tokenType: 'JWT';
-    expiresIn: number;     // segundos
-    issuedAt: number;      // timestamp
+    expiresIn: number;   
+    issuedAt: number;  
   }
   
   export interface SessionMeta {
