@@ -11,8 +11,6 @@ import {
   Alert,
   Divider,
   Checkbox,
-  Row,
-  Col,
   Avatar
 } from 'antd';
 import {

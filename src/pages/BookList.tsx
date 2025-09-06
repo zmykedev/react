@@ -8,6 +8,8 @@ import { BookPagination } from '../components/BookPagination';
 import { BookCard } from '../components/BookCard';
 import { BookForm } from '../components/BookForm';
 import useStore from '../store';
+import { Layout, Row, Col, Space, Alert, Empty, Button, Typography, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 const BookList: React.FC = () => {
   // Estado principal
@@ -16,7 +18,7 @@ const BookList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   // Store para verificar sesión
-  const { getAccessToken, getUser } = useStore();
+  const {  } = useStore(); // Removed unused getAccessToken and getUser
   
   // Estado de filtros y ordenamiento
   const [filters, setFilters] = useState<BookFilters>({});
@@ -49,6 +51,18 @@ const BookList: React.FC = () => {
   const memoizedSort = useMemo(() => sort, [sort.field, sort.direction]);
   const memoizedPagination = useMemo(() => pagination, [pagination.page, pagination.limit]);
 
+  // Determinar si hay filtros activos
+  const hasActiveFilters = useMemo(() => {
+    const defaultFilters = {};
+    const defaultSort = { field: 'title', direction: 'asc' };
+    return (
+      JSON.stringify(memoizedFilters) !== JSON.stringify(defaultFilters) ||
+      memoizedSort.field !== defaultSort.field ||
+      memoizedSort.direction !== defaultSort.direction ||
+      memoizedPagination.page !== 1
+    );
+  }, [memoizedFilters, memoizedSort, memoizedPagination]);
+
   // Cargar datos iniciales - solo una vez
   useEffect(() => {
     if (initialLoadRef.current) return;
@@ -60,24 +74,12 @@ const BookList: React.FC = () => {
         loadingRef.current = true;
         setLoading(true);
         
-        // Debug: Verificar estado de la sesión
-        console.log('🔑 === BOOK LIST LOAD INITIAL DATA ===');
-        console.log('🎫 Access Token:', getAccessToken());
-        console.log('👤 User:', getUser());
-        console.log('🔑 === FIN BOOK LIST LOAD INITIAL DATA ===');
-        
         // Cargar datos auxiliares y libros en paralelo
         const [genresData, publishersData, booksResponse] = await Promise.all([
           BookService.getGenres(),
           BookService.getPublishers(),
           BookService.getBooks(filters, sort, pagination)
         ]);
-        
-        // Los datos ya están validados en el servicio
-        console.log('🔍 === DATOS OBTENIDOS ===');
-        console.log('📚 Genres:', genresData);
-        console.log('📚 Publishers:', publishersData);
-        console.log('🔍 === FIN DATOS ===');
         
         setGenres(genresData);
         setPublishers(publishersData);
@@ -167,10 +169,30 @@ const BookList: React.FC = () => {
     });
   }, []);
 
-  const handleCreateBook = useCallback(async (bookData: any) => {
+  const handleCreateBook = useCallback(async (bookData: any, imageFile?: File) => {
     try {
       setFormLoading(true);
-      await BookService.createBook(bookData);
+      console.log('📚 Creating book with data:', bookData);
+      console.log('📁 Image file:', imageFile);
+      
+      const createdBook = await BookService.createBook(bookData);
+      console.log('✅ Book created successfully:', createdBook);
+      
+      // If there's an image file, upload it with the new book ID
+      if (imageFile && createdBook.id) {
+        console.log('🖼️ Uploading image for book ID:', createdBook.id);
+        try {
+          const uploadResult = await BookService.uploadBookImage(imageFile, createdBook.id);
+          console.log('✅ Image uploaded and book updated:', uploadResult);
+          message.success('Libro creado e imagen subida exitosamente');
+        } catch (imageError) {
+          console.error('❌ Error uploading image:', imageError);
+          message.warning('Libro creado pero hubo un error al subir la imagen');
+        }
+      } else {
+        console.log('ℹ️ No image file to upload. imageFile:', !!imageFile, 'bookId:', createdBook.id);
+        message.success('Libro creado exitosamente');
+      }
       
       // Reload books and close form
       await loadBooks();
@@ -232,11 +254,11 @@ const BookList: React.FC = () => {
     setEditingBook(null);
   }, []);
 
-  const handleFormSubmit = useCallback(async (bookData: any) => {
+  const handleFormSubmit = useCallback(async (bookData: any, imageFile?: File) => {
     if (editingBook) {
       await handleUpdateBook(bookData);
     } else {
-      await handleCreateBook(bookData);
+      await handleCreateBook(bookData, imageFile);
     }
   }, [editingBook, handleUpdateBook, handleCreateBook]);
 
@@ -266,29 +288,31 @@ const BookList: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-primary">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Layout className="min-h-screen bg-primary">
+      <Layout.Content className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">
+        <Row justify="space-between" align="middle" className="mb-8 flex-col sm:flex-row gap-4">
+          <Col>
+            <Typography.Title level={1} className="text-3xl font-bold text-primary">
               Catálogo de Libros
-            </h1>
-            <p className="text-secondary mt-2">
+            </Typography.Title>
+            <Typography.Text type="secondary" className="text-secondary mt-2">
               Gestiona tu inventario de libros de manera eficiente
-            </p>
-          </div>
+            </Typography.Text>
+          </Col>
           
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn-primary px-6 py-3 flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Agregar Libro
-          </button>
-        </div>
+          <Col>
+            <Button
+              type="primary"
+              size="large"
+              icon={<PlusOutlined />}
+              onClick={() => setShowForm(true)}
+              className="btn-primary px-6 py-3 flex items-center gap-2"
+            >
+              Agregar Libro
+            </Button>
+          </Col>
+        </Row>
 
         {/* Filtros */}
         <BookFiltersComponent
@@ -311,9 +335,16 @@ const BookList: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg dark:bg-red-900/20 dark:border-red-700 dark:text-red-300"
+            className="mt-6"
           >
-            {error}
+            <Alert
+              message="Error"
+              description={error}
+              type="error"
+              showIcon
+              closable
+              onClose={() => setError(null)}
+            />
           </motion.div>
         )}
 
@@ -325,17 +356,21 @@ const BookList: React.FC = () => {
               animate={{ opacity: 1 }}
               className="text-center py-12"
             >
-                           <div className="w-24 h-24 mx-auto mb-4 text-muted">
-               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-               </svg>
-             </div>
-             <h3 className="text-lg font-medium text-secondary mb-2">
-               No se encontraron libros
-             </h3>
-             <p className="text-muted">
-               Intenta ajustar los filtros o agregar un nuevo libro.
-             </p>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_DEFAULT}
+                description={
+                  <Space direction="vertical" size="small">
+                    <Typography.Title level={3} className="text-lg font-medium text-secondary mb-2">
+                      {hasActiveFilters ? 'No se encontraron resultados' : 'Aún no hay libros en tu inventario.'}
+                    </Typography.Title>
+                    <Typography.Text type="secondary" className="text-muted">
+                      {hasActiveFilters
+                        ? 'Intenta ajustar los filtros o limpiar la búsqueda.'
+                        : '¡Empieza agregando tu primer libro!'}
+                    </Typography.Text>
+                  </Space>
+                }
+              />
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -354,7 +389,7 @@ const BookList: React.FC = () => {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div className="mt-8">
+          <div className="mt-8 text-center">
             <BookPagination
               currentPage={memoizedPagination.page}
               totalPages={totalPages}
@@ -365,7 +400,7 @@ const BookList: React.FC = () => {
             />
           </div>
         )}
-      </div>
+      </Layout.Content>
 
       {/* Modal del formulario */}
       <AnimatePresence>
@@ -521,7 +556,7 @@ const BookList: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </Layout>
   );
 };
 

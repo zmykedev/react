@@ -1,60 +1,31 @@
 import React from 'react';
-import { Button, ButtonProps } from 'antd';
-import { THEME_COLORS } from '../data/landingData';
+import { Button, type ButtonProps } from 'antd';
 
-interface ActionButtonProps extends Omit<ButtonProps, 'onClick'> {
-  variant: 'primary' | 'secondary' | 'outline';
+interface ActionButtonProps extends Omit<ButtonProps, 'onClick' | 'type' | 'ghost'> {
+  antDType?: ButtonProps['type'];
+  isGhost?: boolean;
   action: 'login' | 'register' | 'scroll';
   target?: string;
   onAction: (action: string, target?: string) => void;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({
-  variant,
+  antDType = 'default',
+  isGhost = false,
   action,
   target,
   onAction,
   children,
   ...buttonProps
 }) => {
-  const getButtonStyles = () => {
-    switch (variant) {
-      case 'primary':
-        return {
-          style: { 
-            backgroundColor: THEME_COLORS.primary, 
-            borderColor: THEME_COLORS.primary 
-          },
-          className: 'hover:bg-fountain-blue-500 hover:border-fountain-blue-500 shadow-lg'
-        };
-      case 'secondary':
-        return {
-          style: { 
-            borderColor: 'white', 
-            color: 'white' 
-          },
-          className: 'hover:bg-white hover:text-fountain-blue-700 shadow-lg'
-        };
-      case 'outline':
-        return {
-          style: { 
-            borderColor: 'white', 
-            color: 'white' 
-          },
-          className: 'hover:bg-white hover:text-fountain-blue-700 shadow-lg'
-        };
-      default:
-        return {};
-    }
-  };
-
-  const styles = getButtonStyles();
-
   return (
     <Button
+      type={antDType}
+      ghost={isGhost}
+      size="large"
       {...buttonProps}
-      {...styles}
       onClick={() => onAction(action, target)}
+      className="shadow-lg"
     >
       {children}
     </Button>

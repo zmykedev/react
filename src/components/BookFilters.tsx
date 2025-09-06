@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { BookFilters as BookFiltersType } from '../types/book';
 import { motion } from 'framer-motion';
+import { Form, Input, Select, Button, Typography, Row, Col, Space, Card } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { useDebounceValue } from 'usehooks-ts';
 
 interface BookFiltersProps {
@@ -59,117 +61,106 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="card-primary p-6"
+      className="w-full"
     >
-      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-primary">
-          Filtros Avanzados
-        </h3>
-        <button
-          onClick={clearFilters}
-          className="text-sm text-fountain-blue-600 hover:text-fountain-blue-700 transition-colors dark:text-fountain-blue-400 dark:hover:text-fountain-blue-300"
-        >
-          Limpiar filtros
-        </button>
-      </div>
+      <Card className="card-primary p-6">
+        <Row justify="space-between" align="middle" className="mb-6 flex-col lg:flex-row gap-4">
+          <Col>
+            <Typography.Title level={3} className="text-lg font-semibold text-primary mb-0">
+              Filtros Avanzados
+            </Typography.Title>
+          </Col>
+          <Col>
+            <Button
+              type="link"
+              onClick={clearFilters}
+              icon={<CloseCircleOutlined />}
+              className="text-fountain-blue-600 hover:text-fountain-blue-700 transition-colors dark:text-fountain-blue-400 dark:hover:text-fountain-blue-300"
+            >
+              Limpiar filtros
+            </Button>
+          </Col>
+        </Row>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* Búsqueda general en tiempo real */}
-        <div>
-          <label className="block text-sm font-medium text-secondary mb-2">
-            Búsqueda General
-          </label>
-          <input
-            type="text"
-            placeholder="Buscar por título..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-primary dark:input-dark"
-          />
-          <p className="text-xs text-fountain-blue-500 mt-1">
-            Busca por título del libro
-          </p>
-        </div>
-
-        {/* Filtro por autor con debounce */}
-        <div>
-          <label className="block text-sm font-medium text-secondary mb-2">
-            Autor
-          </label>
-          <input
-            type="text"
-            placeholder="Filtrar por autor"
-            value={authorTerm}
-            onChange={(e) => setAuthorTerm(e.target.value)}
-            className="input-primary dark:input-dark"
-          />
-          <p className="text-xs text-fountain-blue-500 mt-1">
-            Filtro independiente por autor
-          </p>
-        </div>
-
-        {/* Filtro por género */}
-        <div>
-          <label className="block text-sm font-medium text-secondary mb-2">
-            Género
-          </label>
-          <select
-            value={filters.genre || ''}
-            onChange={(e) => handleFilterChange('genre', e.target.value)}
-            className="input-primary dark:input-dark"
+        <Form layout="vertical" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {/* Búsqueda general en tiempo real */}
+          <Form.Item
+            label="Búsqueda General"
+            tooltip="Buscar por título del libro"
           >
-            <option value="">Todos los géneros</option>
-            {!Array.isArray(genres) || genres.length === 0 ? (
-              <option value="" disabled>Cargando géneros...</option>
-            ) : (
-              genres.map((genre) => (
-                <option key={genre} value={genre}>
-                  {genre}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
+            <Input
+              placeholder="Buscar por título..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </Form.Item>
 
-        {/* Filtro por editorial */}
-        <div>
-          <label className="block text-sm font-medium text-secondary mb-2">
-            Editorial
-          </label>
-          <select
-            value={filters.publisher || ''}
-            onChange={(e) => handleFilterChange('publisher', e.target.value)}
-            className="input-primary dark:input-dark"
+          {/* Filtro por autor con debounce */}
+          <Form.Item
+            label="Autor"
+            tooltip="Filtro independiente por autor"
           >
-            <option value="">Todas las editoriales</option>
-            {!Array.isArray(publishers) || publishers.length === 0 ? (
-              <option value="" disabled>Cargando editoriales...</option>
-            ) : (
-              publishers.map((publisher) => (
-                <option key={publisher} value={publisher}>
-                  {publisher}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
+            <Input
+              placeholder="Filtrar por autor"
+              value={authorTerm}
+              onChange={(e) => setAuthorTerm(e.target.value)}
+            />
+          </Form.Item>
 
-        {/* Filtro por disponibilidad */}
-        <div>
-          <label className="block text-sm font-medium text-secondary mb-2">
-            Disponibilidad
-          </label>
-          <select
-            value={filters.availability === undefined ? '' : filters.availability.toString()}
-            onChange={(e) => handleFilterChange('availability', e.target.value === '' ? undefined : e.target.value === 'true')}
-            className="input-primary dark:input-dark"
-          >
-            <option value="">Todas</option>
-            <option value="true">Disponible</option>
-            <option value="false">No disponible</option>
-          </select>
-        </div>
-      </div>
+          {/* Filtro por género */}
+          <Form.Item label="Género">
+            <Select
+              placeholder="Todos los géneros"
+              value={filters.genre || undefined}
+              onChange={(value) => handleFilterChange('genre', value)}
+            >
+              <Select.Option value="">Todos los géneros</Select.Option>
+              {!Array.isArray(genres) || genres.length === 0 ? (
+                <Select.Option value="" disabled>Cargando géneros...</Select.Option>
+              ) : (
+                genres.map((genre) => (
+                  <Select.Option key={genre} value={genre}>
+                    {genre}
+                  </Select.Option>
+                ))
+              )}
+            </Select>
+          </Form.Item>
+
+          {/* Filtro por editorial */}
+          <Form.Item label="Editorial">
+            <Select
+              placeholder="Todas las editoriales"
+              value={filters.publisher || undefined}
+              onChange={(value) => handleFilterChange('publisher', value)}
+            >
+              <Select.Option value="">Todas las editoriales</Select.Option>
+              {!Array.isArray(publishers) || publishers.length === 0 ? (
+                <Select.Option value="" disabled>Cargando editoriales...</Select.Option>
+              ) : (
+                publishers.map((publisher) => (
+                  <Select.Option key={publisher} value={publisher}>
+                    {publisher}
+                  </Select.Option>
+                ))
+              )}
+            </Select>
+          </Form.Item>
+
+          {/* Filtro por disponibilidad */}
+          <Form.Item label="Disponibilidad">
+            <Select
+              placeholder="Todas"
+              value={filters.availability === undefined ? '' : filters.availability.toString()}
+              onChange={(value) => handleFilterChange('availability', value === '' ? undefined : value === 'true')}
+            >
+              <Select.Option value="">Todas</Select.Option>
+              <Select.Option value="true">Disponible</Select.Option>
+              <Select.Option value="false">No disponible</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Card>
     </motion.div>
   );
 };

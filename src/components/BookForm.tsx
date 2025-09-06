@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { Book, BookFormData } from '../types/book';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Form, Input, InputNumber, Select, Switch, Button, Upload, Typography, Space, message } from 'antd';
+import { UploadOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { BookService } from '../services/bookService';
 
 type BookFormErrors = Partial<Record<keyof BookFormData, string>>;
 
 interface BookFormProps {
   book?: Book;
-  onSubmit: (bookData: BookFormData) => Promise<void>;
+  onSubmit: (bookData: BookFormData, imageFile?: File) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
   genres: string[];
@@ -29,15 +32,40 @@ export const BookForm: React.FC<BookFormProps> = ({
     genre: book?.genre || '',
     availability: book?.availability ?? true,
     image: undefined,
-
+    imageUrl: book?.imageUrl || '',
     description: book?.description || ''
   });
 
   const [errors, setErrors] = useState<BookFormErrors>({});
   const [imagePreview, setImagePreview] = useState<string | null>(book?.imageUrl || null);
-  const [touched, setTouched] = useState<Set<keyof BookFormData>>(new Set());
+  const [uploadingImage, setUploadingImage] = useState(false);
+  // const [touched, setTouched] = useState<Set<keyof BookFormData>>(new Set()); // Removed unused touched state
 
   const isEditMode = !!book;
+
+  // Function to handle image upload
+  const handleImageUpload = async (file: File): Promise<string> => {
+    try {
+      setUploadingImage(true);
+      
+      // If we're in edit mode and have a book ID, upload with bookId
+      if (isEditMode && book?.id) {
+        const uploadResult = await BookService.uploadBookImage(file, book.id);
+        message.success('Imagen subida exitosamente');
+        return uploadResult.url;
+      } else {
+        // For new books, we'll upload the image after creating the book
+        // For now, just return a placeholder or handle differently
+        message.warning('La imagen se subirá después de crear el libro');
+        return '';
+      }
+    } catch (error) {
+      message.error('Error al subir la imagen');
+      throw error;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   // Validación simple
   const validateField = (name: keyof BookFormData, value: any) => {
@@ -77,86 +105,86 @@ export const BookForm: React.FC<BookFormProps> = ({
   };
 
   const handleBlur = (name: keyof BookFormData) => {
-    setTouched(prev => new Set(prev).add(name));
+    // setTouched(prev => new Set(prev).add(name)); // No longer needed
     validateField(name, formData[name]);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setErrors(prev => ({ ...prev, image: 'Solo se permiten archivos de imagen' }));
-        return;
-      }
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => { // No longer needed
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     // Validate file type
+  //     if (!file.type.startsWith('image/')) {
+  //       setErrors(prev => ({ ...prev, image: 'Solo se permiten archivos de imagen' }));
+  //       return;
+  //     }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, image: 'La imagen no puede ser mayor a 5MB' }));
-        return;
-      }
+  //     // Validate file size (max 5MB)
+  //     if (file.size > 5 * 1024 * 1024) {
+  //       setErrors(prev => ({ ...prev, image: 'La imagen no puede ser mayor a 5MB' }));
+  //       return;
+  //     }
 
-      setErrors(prev => ({ ...prev, image: undefined }));
-      handleChange('image', file);
+  //     setErrors(prev => ({ ...prev, image: undefined }));
+  //     handleChange('image', file);
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  //     // Create preview
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       setImagePreview(e.target?.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent) => { // Replaced by Ant Design Form's onFinish
+  //   e.preventDefault();
     
-    // Mark all fields as touched
-    const allFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability'];
-    setTouched(new Set(allFields));
+  //   // Mark all fields as touched
+  //   const allFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability'];
+  //   setTouched(new Set(allFields));
 
-    // Validar todos los campos antes de enviar
-    let hasErrors = false;
-    const newErrors: BookFormErrors = {};
+  //   // Validar todos los campos antes de enviar
+  //   let hasErrors = false;
+  //   const newErrors: BookFormErrors = {};
     
-    allFields.forEach(field => {
-      validateField(field, formData[field]);
-      if (errors[field]) {
-        hasErrors = true;
-      }
-    });
+  //   allFields.forEach(field => {
+  //     validateField(field, formData[field]);
+  //     if (errors[field]) {
+  //       hasErrors = true;
+  //     }
+  //   });
     
-    if (!hasErrors) {
-      await onSubmit(formData);
-    }
-  };
+  //   if (!hasErrors) {
+  //     await onSubmit(formData);
+  //   }
+  // };
 
-  const isFieldValid = (field: keyof BookFormData) => {
-    return formData[field] && !errors[field];
-  };
+  // const isFieldValid = (field: keyof BookFormData) => { // No longer needed with Ant Design Form validation
+  //   return formData[field] && !errors[field];
+  // };
 
   // Validación simple para habilitar el botón
-  const requiredFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability'];
+  // const requiredFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability']; // No longer needed
   
-  const canSubmit = requiredFields.every(field => {
-    const value = formData[field];
+  // const canSubmit = requiredFields.every(field => { // No longer needed
+  //   const value = formData[field];
     
-    if (field === 'availability') {
-      return typeof value === 'boolean';
-    }
+  //   if (field === 'availability') {
+  //     return typeof value === 'boolean';
+  //   }
     
-    if (field === 'price') {
-      return typeof value === 'number' && value >= 0;
-    }
+  //   if (field === 'price') {
+  //     return typeof value === 'number' && value >= 0;
+  //   }
     
-    // Para campos de texto
-    return typeof value === 'string' && value.trim().length > 0;
-  });
+  //   // Para campos de texto
+  //   return typeof value === 'string' && value.trim().length > 0;
+  // });
   
-  console.log('=== VALIDACIÓN SIMPLE ===');
-  console.log('formData:', formData);
-  console.log('canSubmit:', canSubmit);
-  console.log('=== FIN VALIDACIÓN ===');
+  // console.log('=== VALIDACIÓN SIMPLE ==='); // No longer needed
+  // console.log('formData:', formData); // No longer needed
+  // console.log('canSubmit:', canSubmit); // No longer needed
+  // console.log('=== FIN VALIDACIÓN ==='); // No longer needed
 
   return (
     <motion.div
@@ -164,331 +192,301 @@ export const BookForm: React.FC<BookFormProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className="bg-white/80 dark:bg-fountain-blue-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-fountain-blue-200 dark:border-fountain-blue-600 max-w-5xl mx-auto w-full"
     >
-      <h2 className="text-2xl font-bold text-fountain-blue-900 dark:text-fountain-blue-100 mb-4 text-center">
+      <Typography.Title level={2} className="text-2xl font-bold text-fountain-blue-900 dark:text-fountain-blue-100 mb-4 text-center">
         {isEditMode ? 'Editar Libro' : 'Agregar Nuevo Libro'}
-      </h2>
+      </Typography.Title>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <Form
+        layout="vertical"
+        onFinish={async (values) => {
+          try {
+            let finalFormData = { ...formData, ...values };
+            let imageFile: File | undefined;
+            
+            console.log('📝 Form submitted with values:', values);
+            console.log('📝 Form data image:', formData.image);
+            console.log('📝 Is edit mode:', isEditMode);
+            console.log('📝 Book ID:', book?.id);
+            
+            // If there's a new image file, handle it based on mode
+            if (formData.image) {
+              console.log('🖼️ Image file found:', formData.image);
+              if (isEditMode && book?.id) {
+                // In edit mode, upload image with bookId
+                console.log('✏️ Edit mode: uploading image immediately');
+                const imageUrl = await handleImageUpload(formData.image);
+                finalFormData.imageUrl = imageUrl;
+              } else {
+                // In create mode, keep the file for later upload
+                console.log('➕ Create mode: keeping file for later upload');
+                imageFile = formData.image;
+              }
+              // Remove the file object as it's not needed in the final submission
+              delete finalFormData.image;
+            } else {
+              console.log('ℹ️ No image file in form data');
+            }
+            
+            console.log('📤 Submitting with finalFormData:', finalFormData);
+            console.log('📤 Submitting with imageFile:', imageFile);
+            
+            await onSubmit(finalFormData, imageFile);
+          } catch (error) {
+            console.error('Error submitting form:', error);
+          }
+        }}
+        initialValues={formData}
+        className="space-y-4"
+      >
         {/* Título - Ancho completo */}
-        <div>
-          <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-            Título *
-          </label>
-          <input
-            type="text"
-            value={formData.title}
+        <Form.Item
+          label="Título *"
+          name="title"
+          rules={[{ required: true, message: 'Por favor ingresa el título del libro' }]}
+          validateStatus={errors.title ? 'error' : undefined}
+          help={errors.title}
+        >
+          <Input
+            placeholder="Ingresa el título del libro"
             onChange={(e) => handleChange('title', e.target.value)}
             onBlur={() => handleBlur('title')}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 placeholder-fountain-blue-400 ${
-              errors.title && touched.has('title')
-                ? 'border-red-500'
-                : 'border-fountain-blue-300 dark:border-fountain-blue-600'
-            }`}
-            placeholder="Ingresa el título del libro"
           />
-          <AnimatePresence>
-            {errors.title && touched.has('title') && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mt-1 text-sm text-red-600"
-              >
-                {errors.title}
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
+        </Form.Item>
 
         {/* Primera fila: Autor, Editorial, Género */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-              Autor *
-            </label>
-            <input
-              type="text"
-              value={formData.author}
+          <Form.Item
+            label="Autor *"
+            name="author"
+            rules={[{ required: true, message: 'Por favor ingresa el nombre del autor' }]}
+            validateStatus={errors.author ? 'error' : undefined}
+            help={errors.author}
+          >
+            <Input
+              placeholder="Ingresa el nombre del autor"
               onChange={(e) => handleChange('author', e.target.value)}
               onBlur={() => handleBlur('author')}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 placeholder-fountain-blue-400 ${
-                errors.author && touched.has('author')
-                  ? 'border-red-500'
-                  : 'border-fountain-blue-300 dark:border-fountain-blue-600'
-              }`}
-              placeholder="Ingresa el nombre del autor"
             />
-            <AnimatePresence>
-              {errors.author && touched.has('author') && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-1 text-sm text-red-600"
-                >
-                  {errors.author}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+          </Form.Item>
 
-          <div>
-            <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-              Editorial *
-            </label>
-            <select
-              value={formData.publisher}
-              onChange={(e) => handleChange('publisher', e.target.value)}
+          <Form.Item
+            label="Editorial *"
+            name="publisher"
+            rules={[{ required: true, message: 'Por favor selecciona una editorial' }]}
+            validateStatus={errors.publisher ? 'error' : undefined}
+            help={errors.publisher}
+          >
+            <Select
+              placeholder="Selecciona una editorial"
+              onChange={(value) => handleChange('publisher', value)}
               onBlur={() => handleBlur('publisher')}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 ${
-                errors.publisher && touched.has('publisher')
-                  ? 'border-red-500'
-                  : 'border-fountain-blue-300 dark:border-fountain-blue-600'
-              }`}
             >
-              <option value="">Selecciona una editorial</option>
-              {/* Editoriales del backend */}
+              <Select.Option value="">Selecciona una editorial</Select.Option>
               {publishers && publishers.length > 0 ? (
                 publishers.map((publisher) => (
-                  <option key={publisher} value={publisher}>
+                  <Select.Option key={publisher} value={publisher}>
                     {publisher}
-                  </option>
+                  </Select.Option>
                 ))
               ) : (
-                // Editoriales por defecto si no hay datos del backend
                 <>
-                  <option value="Penguin Random House">Penguin Random House</option>
-                  <option value="HarperCollins">HarperCollins</option>
-                  <option value="Simon & Schuster">Simon & Schuster</option>
-                  <option value="Hachette Book Group">Hachette Book Group</option>
-                  <option value="Macmillan Publishers">Macmillan Publishers</option>
-                  <option value="Scholastic">Scholastic</option>
-                  <option value="Bloomsbury">Bloomsbury</option>
-                  <option value="Faber & Faber">Faber & Faber</option>
-                  <option value="Vintage Books">Vintage Books</option>
-                  <option value="Knopf Doubleday">Knopf Doubleday</option>
-                  <option value="W.W. Norton">W.W. Norton</option>
-                  <option value="Houghton Mifflin Harcourt">Houghton Mifflin Harcourt</option>
-                  <option value="Little, Brown and Company">Little, Brown and Company</option>
-                  <option value="Crown Publishing">Crown Publishing</option>
-                  <option value="Other">Otra</option>
+                  <Select.Option value="Penguin Random House">Penguin Random House</Select.Option>
+                  <Select.Option value="HarperCollins">HarperCollins</Select.Option>
+                  <Select.Option value="Simon & Schuster">Simon & Schuster</Select.Option>
+                  <Select.Option value="Hachette Book Group">Hachette Book Group</Select.Option>
+                  <Select.Option value="Macmillan Publishers">Macmillan Publishers</Select.Option>
+                  <Select.Option value="Scholastic">Scholastic</Select.Option>
+                  <Select.Option value="Bloomsbury">Bloomsbury</Select.Option>
+                  <Select.Option value="Faber & Faber">Faber & Faber</Select.Option>
+                  <Select.Option value="Vintage Books">Vintage Books</Select.Option>
+                  <Select.Option value="Knopf Doubleday">Knopf Doubleday</Select.Option>
+                  <Select.Option value="W.W. Norton">W.W. Norton</Select.Option>
+                  <Select.Option value="Houghton Mifflin Harcourt">Houghton Mifflin Harcourt</Select.Option>
+                  <Select.Option value="Little, Brown and Company">Little, Brown and Company</Select.Option>
+                  <Select.Option value="Crown Publishing">Crown Publishing</Select.Option>
+                  <Select.Option value="Other">Otra</Select.Option>
                 </>
               )}
-            </select>
-            <AnimatePresence>
-              {errors.publisher && touched.has('publisher') && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-1 text-sm text-red-600"
-                >
-                  {errors.publisher}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+            </Select>
+          </Form.Item>
 
-          <div>
-            <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-              Género *
-            </label>
-            <select
-              value={formData.genre}
-              onChange={(e) => handleChange('genre', e.target.value)}
+          <Form.Item
+            label="Género *"
+            name="genre"
+            rules={[{ required: true, message: 'Por favor selecciona un género' }]}
+            validateStatus={errors.genre ? 'error' : undefined}
+            help={errors.genre}
+          >
+            <Select
+              placeholder="Selecciona un género"
+              onChange={(value) => handleChange('genre', value)}
               onBlur={() => handleBlur('genre')}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 ${
-                errors.genre && touched.has('genre')
-                  ? 'border-red-500'
-                  : 'border-fountain-blue-300 dark:border-fountain-blue-600'
-              }`}
             >
-              <option value="">Selecciona un género</option>
-              {/* Géneros del backend */}
+              <Select.Option value="">Selecciona un género</Select.Option>
               {genres && genres.length > 0 ? (
                 genres.map((genre) => (
-                  <option key={genre} value={genre}>
+                  <Select.Option key={genre} value={genre}>
                     {genre}
-                  </option>
+                  </Select.Option>
                 ))
               ) : (
-                // Géneros por defecto si no hay datos del backend
                 <>
-                  <option value="Ficción">Ficción</option>
-                  <option value="No Ficción">No Ficción</option>
-                  <option value="Ciencia Ficción">Ciencia Ficción</option>
-                  <option value="Fantasía">Fantasía</option>
-                  <option value="Misterio">Misterio</option>
-                  <option value="Romance">Romance</option>
-                  <option value="Terror">Terror</option>
-                  <option value="Histórico">Histórico</option>
-                  <option value="Biografía">Biografía</option>
-                  <option value="Autoayuda">Autoayuda</option>
-                  <option value="Tecnología">Tecnología</option>
-                  <option value="Cocina">Cocina</option>
-                  <option value="Viajes">Viajes</option>
-                  <option value="Arte">Arte</option>
-                  <option value="Filosofía">Filosofía</option>
-                  <option value="Religión">Religión</option>
-                  <option value="Otro">Otro</option>
+                  <Select.Option value="Ficción">Ficción</Select.Option>
+                  <Select.Option value="No Ficción">No Ficción</Select.Option>
+                  <Select.Option value="Ciencia Ficción">Ciencia Ficción</Select.Option>
+                  <Select.Option value="Fantasía">Fantasía</Select.Option>
+                  <Select.Option value="Misterio">Misterio</Select.Option>
+                  <Select.Option value="Romance">Romance</Select.Option>
+                  <Select.Option value="Terror">Terror</Select.Option>
+                  <Select.Option value="Histórico">Histórico</Select.Option>
+                  <Select.Option value="Biografía">Biografía</Select.Option>
+                  <Select.Option value="Autoayuda">Autoayuda</Select.Option>
+                  <Select.Option value="Tecnología">Tecnología</Select.Option>
+                  <Select.Option value="Cocina">Cocina</Select.Option>
+                  <Select.Option value="Viajes">Viajes</Select.Option>
+                  <Select.Option value="Arte">Arte</Select.Option>
+                  <Select.Option value="Filosofía">Filosofía</Select.Option>
+                  <Select.Option value="Religión">Religión</Select.Option>
+                  <Select.Option value="Otro">Otro</Select.Option>
                 </>
               )}
-            </select>
-            <AnimatePresence>
-              {errors.genre && touched.has('genre') && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-1 text-sm text-red-600"
-                >
-                  {errors.genre}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+            </Select>
+          </Form.Item>
         </div>
 
         {/* Segunda fila: Precio, Disponibilidad */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-              Precio *
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="100"
-              value={formData.price}
-              onChange={(e) => handleChange('price', Number(e.target.value))}
-              onBlur={() => handleBlur('price')}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 ${
-                errors.price && touched.has('price')
-                  ? 'border-red-500'
-                  : 'border-fountain-blue-300 dark:border-fountain-blue-600'
-              }`}
+          <Form.Item
+            label="Precio *"
+            name="price"
+            rules={[{ required: true, message: 'Por favor ingresa el precio' }, { type: 'number', min: 0, message: 'El precio debe ser un número positivo' }]} // Adjust message for consistency
+            validateStatus={errors.price ? 'error' : undefined}
+            help={errors.price}
+          >
+            <InputNumber
+              min={0}
+              step={100}
               placeholder="0"
+              onChange={(value) => handleChange('price', value)}
+              onBlur={() => handleBlur('price')}
+              className="w-full"
             />
-            <AnimatePresence>
-              {errors.price && touched.has('price') && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-1 text-sm text-red-600"
-                >
-                  {errors.price}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+          </Form.Item>
 
-          <div className="flex items-center justify-center">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="availability"
-                checked={formData.availability}
-                onChange={(e) => handleChange('availability', e.target.checked)}
-                className="w-4 h-4 text-fountain-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-fountain-blue-500 focus:ring-2"
-              />
-              <label htmlFor="availability" className="ml-2 text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300">
-                Libro disponible
-              </label>
-            </div>
-          </div>
-
-
+          <Form.Item
+            label="Disponibilidad"
+            name="availability"
+            valuePropName="checked"
+          >
+            <Switch
+              checkedChildren="Disponible"
+              unCheckedChildren="No disponible"
+              onChange={(checked) => handleChange('availability', checked)}
+            />
+          </Form.Item>
         </div>
 
         {/* Descripción - Ancho completo pero más compacta */}
-        <div>
-          <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-            Descripción (opcional)
-          </label>
-          <textarea
-            value={formData.description || ''}
-            onChange={(e) => handleChange('description', e.target.value)}
+        <Form.Item
+          label="Descripción (opcional)"
+          name="description"
+        >
+          <Input.TextArea
             rows={2}
-            className="w-full px-3 py-2 border border-fountain-blue-300 dark:border-fountain-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 placeholder-fountain-blue-400 resize-none"
             placeholder="Ingresa una breve descripción del libro..."
+            onChange={(e) => handleChange('description', e.target.value)}
           />
-        </div>
+        </Form.Item>
 
         {/* Imagen - Ancho completo */}
-        <div>
-          <label className="block text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-            Imagen del libro
-          </label>
-          <div className="space-y-3">
-            {/* Preview de imagen */}
-            {imagePreview && (
-              <div className="relative inline-block">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-24 h-24 object-cover rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImagePreview(null);
-                    handleChange('image', undefined);
-                  }}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-            )}
+        <Form.Item
+          label="Imagen del libro (opcional)"
+          name="image"
+          validateStatus={errors.image ? 'error' : undefined}
+          help={errors.image}
+        >
+          <Upload
+            accept="image/*"
+            beforeUpload={() => false} // Prevent automatic upload
+            showUploadList={false}
+            onChange={(info) => {
+              const file = info.fileList[0]?.originFileObj;
+              if (file) {
+                if (!file.type.startsWith('image/')) {
+                  setErrors(prev => ({ ...prev, image: 'Solo se permiten archivos de imagen' }));
+                  return;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                  setErrors(prev => ({ ...prev, image: 'La imagen no puede ser mayor a 5MB' }));
+                  return;
+                }
+                setErrors(prev => ({ ...prev, image: undefined }));
+                handleChange('image', file);
 
-            {/* Input de archivo */}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full px-3 py-2 border border-fountain-blue-300 dark:border-fountain-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-fountain-blue-600 file:text-white hover:file:bg-fountain-blue-700"
-            />
-            <p className="text-xs text-fountain-blue-500 dark:text-fountain-blue-400">
-              Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB
-            </p>
-            <AnimatePresence>
-              {errors.image && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="text-sm text-red-600"
-                >
-                  {errors.image}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  setImagePreview(e.target?.result as string);
+                };
+                reader.readAsDataURL(file);
+              } else {
+                setImagePreview(null);
+                handleChange('image', undefined);
+              }
+            }}
+          >
+            <Button 
+              icon={<UploadOutlined />} 
+              loading={uploadingImage}
+              disabled={uploadingImage}
+            >
+              {uploadingImage ? 'Subiendo...' : 'Seleccionar Archivo'}
+            </Button>
+          </Upload>
+          {imagePreview && (
+            <div className="relative inline-block mt-2">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600"
+              />
+              <Button
+                type="text"
+                icon={<CloseCircleOutlined />}
+                onClick={() => {
+                  setImagePreview(null);
+                  handleChange('image', undefined);
+                  setErrors(prev => ({ ...prev, image: undefined }));
+                }}
+                className="absolute -top-2 -right-2 text-red-500 hover:text-red-700"
+                shape="circle"
+                size="small"
+              />
+            </div>
+          )}
+          <Typography.Text type="secondary" className="block text-xs mt-1">
+            Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB
+          </Typography.Text>
+        </Form.Item>
 
         {/* Botones - Centrados y más compactos */}
-        <div className="flex gap-4 pt-2">
-          <button
-            type="button"
+        <Space className="flex justify-end pt-2">
+          <Button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 border border-fountain-blue-600 text-fountain-blue-600 dark:text-fountain-blue-400 rounded-lg font-medium hover:bg-fountain-blue-600 hover:text-white transition-colors"
+            size="large"
           >
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={!canSubmit || isLoading}
-            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-              canSubmit && !isLoading
-                ? 'bg-fountain-blue-600 text-white hover:bg-fountain-blue-700'
-                : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            }`}
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoading || uploadingImage}
+            disabled={isLoading || uploadingImage}
+            size="large"
           >
-            {isLoading ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Crear')}
-          </button>
-        </div>
-      </form>
+            {isLoading ? 'Guardando...' : uploadingImage ? 'Subiendo imagen...' : (isEditMode ? 'Actualizar' : 'Crear')}
+          </Button>
+        </Space>
+      </Form>
     </motion.div>
   );
 };

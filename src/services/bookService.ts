@@ -87,7 +87,12 @@ export class BookService {
       body: JSON.stringify(jsonData),
     });
     
-    return this.handleResponse<Book>(response);
+    const responseData = await this.handleResponse<any>(response);
+    
+    // Extract the book data from the response wrapper
+    const book = responseData.data || responseData;
+    
+    return book;
   }
 
   static async updateBook(id: string, bookData: BookFormData): Promise<Book> {
@@ -151,5 +156,64 @@ export class BookService {
     const publishers = responseData.data || [];
     
     return Array.isArray(publishers) ? publishers : [];
+  }
+
+  static async uploadBookImage(imageFile: File, bookId: string): Promise<{ success: boolean; message: string; originalName: string; size: number; mimeType: string }> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('bookId', bookId);
+
+    const response = await fetch(API_ENDPOINTS.BOOKS.UPLOAD_IMAGE, {
+      method: 'POST',
+      headers: {
+        ...this.getAuthHeaders(),
+        // Don't set Content-Type header, let the browser set it with boundary for FormData
+      },
+      body: formData,
+    });
+    
+    const responseData = await this.handleResponse<any>(response);
+    
+    // Extract the data from the response wrapper
+    const data = responseData.data || responseData;
+    
+    return data;
+  }
+
+  static async uploadImage(imageFile: File, folder?: string): Promise<{ url: string; originalName: string; size: number; mimeType: string }> {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    
+    if (folder) {
+      formData.append('folder', folder);
+    }
+
+    const response = await fetch(API_ENDPOINTS.STORAGE.UPLOAD, {
+      method: 'POST',
+      headers: {
+        ...this.getAuthHeaders(),
+        // Don't set Content-Type header, let the browser set it with boundary for FormData
+      },
+      body: formData,
+    });
+    
+    return this.handleResponse<{ url: string; originalName: string; size: number; mimeType: string }>(response);
+  }
+
+  static async deleteImage(imageUrl: string): Promise<boolean> {
+    const response = await fetch(`${API_ENDPOINTS.STORAGE.DELETE}?url=${encodeURIComponent(imageUrl)}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders(),
+    });
+    
+    return this.handleResponse<boolean>(response);
+  }
+
+  static async getImageMetadata(imageUrl: string): Promise<any> {
+    const response = await fetch(`${API_ENDPOINTS.STORAGE.METADATA}?url=${encodeURIComponent(imageUrl)}`, {
+      headers: this.getAuthHeaders(),
+    });
+    
+    return this.handleResponse<any>(response);
   }
 }

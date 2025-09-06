@@ -88,9 +88,9 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
   ];
 
   return (
-    <Header className="shadow-sm border-b border-primary px-6 flex items-center justify-between">
+    <Header className="shadow-sm border-b border-solid border-gray-200 dark:border-gray-700 px-6 flex items-center justify-between">
       {/* Logo y Título */}
-      <div className="flex items-center">
+      <Space align="center">
         <Avatar 
           size={40} 
           style={{ backgroundColor: '#288592' }}
@@ -98,15 +98,15 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
         />
         <Typography.Title 
           level={3} 
-          className="ml-3 mb-0 cursor-pointer hover:text-fountain-blue-600 dark:hover:text-fountain-blue-200 transition-colors"
+          className="ml-3 mb-0 cursor-pointer text-fountain-blue-900 dark:text-fountain-blue-100 hover:text-fountain-blue-600 dark:hover:text-fountain-blue-200 transition-colors"
           onClick={() => navigate('/')}
         >
           CMPC <span className="font-light">Inventario</span>
         </Typography.Title>
-      </div>
+      </Space>
 
       {/* Navegación Desktop */}
-      <div className="hidden md:flex items-center space-x-6">
+      <div className="hidden md:flex items-center">
         {/* Enlaces de navegación para usuarios no logueados */}
         {!user && (
           <Space size="large">
@@ -114,7 +114,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
               type="text" 
               icon={<HomeOutlined />}
               onClick={() => navigate('/')}
-              className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
             >
               Inicio
             </Button>
@@ -122,7 +121,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
               type="text" 
               icon={<BookOutlined />}
               onClick={() => navigate('/books')}
-              className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
             >
               Catálogo
             </Button>
@@ -130,7 +128,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
               type="text" 
               icon={<UserOutlined />}
               onClick={() => navigate('/about')}
-              className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
             >
               Acerca de
             </Button>
@@ -146,7 +143,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
                 type="text" 
                 icon={item.icon}
                 onClick={item.onClick}
-                className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
               >
                 {item.label}
               </Button>
@@ -155,18 +151,17 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
         )}
         
         {/* Switch de tema */}
-        <div className="flex items-center">
+        <Space className="ml-6">
           <Switch
             checked={theme === 'dark'}
             onChange={toggleTheme}
             checkedChildren={<MoonOutlined />}
             unCheckedChildren={<SunOutlined />}
-            className="bg-fountain-blue-300 dark:bg-fountain-blue-600"
           />
-        </div>
+        </Space>
 
         {/* Usuario y acciones */}
-        <Space size="middle">
+        <Space size="middle" className="ml-6">
           {user ? (
             <>
               {/* Notificaciones */}
@@ -174,19 +169,18 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
                 <Button 
                   type="text" 
                   icon={<BellOutlined />} 
-                  className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
                 />
               </Badge>
               
               {/* Información del usuario */}
-              <div className="text-right">
+              <Space direction="vertical" size={0} className="text-right">
                 <Text strong className="block">
                   {userName || user?.firstName || 'Usuario'}
                 </Text>
                 <Text type="secondary" className="text-xs block">
                   {userEmail || user?.email || 'usuario@cmpc.com'}
                 </Text>
-              </div>
+              </Space>
               
               {/* Menú de usuario */}
               <Dropdown
@@ -208,7 +202,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
                 type="text"
                 icon={<UserOutlined />}
                 onClick={() => navigate('/register')}
-                className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
               >
                 Registrarse
               </Button>
@@ -218,7 +211,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
                 type="primary" 
                 icon={<UserOutlined />}
                 onClick={() => navigate('/login')}
-                className="btn-primary hover:bg-fountain-blue-700 transition-all"
                 size="middle"
               >
                 Iniciar Sesión
@@ -237,12 +229,11 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
           checkedChildren={<MoonOutlined />}
           unCheckedChildren={<SunOutlined />}
           size="small"
-          className="bg-fountain-blue-300 dark:bg-fountain-blue-600"
         />
         
         {/* Botón de menú */}
         <Dropdown
-          menu={{ 
+          menu={{
             items: [
               // Enlaces para usuarios no logueados
               ...(user ? [] : [
@@ -292,7 +283,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
           <Button 
             type="text" 
             icon={<MenuOutlined />}
-            className="hover:bg-fountain-blue-50 dark:hover:bg-fountain-blue-800/50 transition-all"
           />
         </Dropdown>
       </div>

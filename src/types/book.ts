@@ -20,6 +20,7 @@ export interface BookFormData {
   availability: boolean;
   genre: string;
   image?: File;
+  imageUrl?: string;
   description?: string;
 }
 

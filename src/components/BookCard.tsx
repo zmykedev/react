@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Book } from '../types/book';
 import { motion } from 'framer-motion';
+import { Card, Tag, Typography, Space, Button } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 
 interface BookCardProps {
   book: Book;
@@ -35,96 +37,93 @@ export const BookCard: React.FC<BookCardProps> = ({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -5 }}
-      className="bg-white/80 dark:bg-fountain-blue-800/50 backdrop-blur-sm rounded-lg shadow-sm border border-fountain-blue-200 dark:border-fountain-blue-600 overflow-hidden hover:shadow-lg transition-all duration-300"
+      className="w-full"
     >
-      {/* Imagen del libro */}
-      <div className="relative h-48 bg-gradient-to-br from-fountain-blue-100 to-fountain-blue-200 dark:from-fountain-blue-700 dark:to-fountain-blue-800">
-        {book.imageUrl ? (
-          <img
-            src={book.imageUrl}
-            alt={book.title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <svg className="w-16 h-16 text-fountain-blue-400 dark:text-fountain-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
+      <Card
+        hoverable
+        className="rounded-lg shadow-sm border border-fountain-blue-200 dark:border-fountain-blue-600 overflow-hidden transition-all duration-300"
+        cover={
+          <div className="relative h-48 bg-gradient-to-br from-fountain-blue-100 to-fountain-blue-200 dark:from-fountain-blue-700 dark:to-fountain-blue-800">
+            {book.imageUrl ? (
+              <img
+                alt={book.title}
+                src={book.imageUrl}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <svg className="w-16 h-16 text-fountain-blue-400 dark:text-fountain-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+            )}
+            <Tag
+              color={book.availability ? 'green' : 'red'}
+              className="absolute top-3 right-3 text-xs font-medium"
+            >
+              {book.availability ? 'Disponible' : 'No disponible'}
+            </Tag>
           </div>
-        )}
-        
-        {/* Badge de disponibilidad */}
-        <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-medium ${
-          book.availability
-            ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-            : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-        }`}>
-          {book.availability ? 'Disponible' : 'No disponible'}
-        </div>
-      </div>
-
-      {/* Contenido de la tarjeta */}
-      <div className="p-4">
-        {/* Título */}
-        <h3 className="text-lg font-semibold text-fountain-blue-900 dark:text-fountain-blue-100 mb-2 line-clamp-2">
-          {book.title}
-        </h3>
-
-        {/* Autor */}
-        <p className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-          <span className="font-medium">Autor:</span> {book.author}
-        </p>
-
-        {/* Editorial */}
-        <p className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300 mb-2">
-          <span className="font-medium">Editorial:</span> {book.publisher}
-        </p>
-
-        {/* Género */}
-        <p className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300 mb-3">
-          <span className="font-medium">Género:</span> {book.genre}
-        </p>
-
-        {/* Precio */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xl font-bold text-fountain-blue-600">
-            {formatPrice(book.price)}
-          </span>
-          <span className="text-xs text-fountain-blue-500 dark:text-fountain-blue-400">
-            {formatDate(book.createdAt)}
-          </span>
-        </div>
-
-        {/* Botones de acción */}
-        <div className="flex gap-2">
+        }
+      >
+        <Card.Meta
+          title={
+            <Typography.Title level={4} className="text-lg font-semibold text-fountain-blue-900 dark:text-fountain-blue-100 mb-2 line-clamp-2">
+              {book.title}
+            </Typography.Title>
+          }
+          description={
+            <Space direction="vertical" size={4} className="w-full">
+              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
+                <span className="font-medium">Autor:</span> {book.author}
+              </Typography.Text>
+              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
+                <span className="font-medium">Editorial:</span> {book.publisher}
+              </Typography.Text>
+              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
+                <span className="font-medium">Género:</span> {book.genre}
+              </Typography.Text>
+              <div className="flex items-center justify-between pt-2">
+                <Typography.Text className="text-xl font-bold text-fountain-blue-600">
+                  {formatPrice(book.price)}
+                </Typography.Text>
+                <Typography.Text type="secondary" className="text-xs">
+                  {formatDate(book.createdAt)}
+                </Typography.Text>
+              </div>
+            </Space>
+          }
+        />
+        <Space className="flex justify-end mt-4 w-full">
           {onView && (
-            <button
+            <Button
+              icon={<EyeOutlined />}
               onClick={() => onView(book)}
-              className="flex-1 bg-fountain-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-fountain-blue-700 transition-colors"
             >
               Ver
-            </button>
+            </Button>
           )}
           
           {onEdit && (
-            <button
+            <Button
+              icon={<EditOutlined />}
               onClick={() => onEdit(book)}
-              className="px-3 py-2 border border-fountain-blue-600 text-fountain-blue-600 dark:text-fountain-blue-400 rounded-lg text-sm font-medium hover:bg-fountain-blue-600 hover:text-white transition-colors"
             >
               Editar
-            </button>
+            </Button>
           )}
           
           {onDelete && (
-            <button
+            <Button
+              icon={<DeleteOutlined />}
+              danger
               onClick={() => onDelete(book.id)}
-              className="px-3 py-2 border border-red-600 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-600 hover:text-white transition-colors"
             >
               Eliminar
-            </button>
+            </Button>
           )}
-        </div>
-      </div>
+        </Space>
+      </Card>
     </motion.div>
   );
 };

@@ -9,7 +9,7 @@ interface ProtectedGuestRouteProps {
   children: React.ReactNode;
 }
 
-function ProtectedGuestRoute({ children }: ProtectedGuestRouteProps) {
+export function ProtectedGuestRoute({ children }: ProtectedGuestRouteProps) {
   const { isLoggedIn } = useStore();
   
   if (isLoggedIn) {
@@ -32,19 +32,11 @@ export function GuestRoutes() {
       />
       <Route 
         path="/login" 
-        element={
-          <ProtectedGuestRoute>
-            <Login />
-          </ProtectedGuestRoute>
-        } 
+        element={<Login />}
       />
       <Route 
         path="/register" 
-        element={
-          <ProtectedGuestRoute>
-            <Register />
-          </ProtectedGuestRoute>
-        } 
+        element={<Register />}
       />
     </Routes>
   );

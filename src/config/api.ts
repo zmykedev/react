@@ -1,4 +1,4 @@
-let apiBase = (import.meta as any)?.env?.VITE_API_URL || 'https://cpmc-back-production.up.railway.app';
+let apiBase = (import.meta as any)?.env?.VITE_API_URL || 'http://localhost:8080'//'https://cpmc-back-production.up.railway.app';
 apiBase = apiBase.replace(/\/$/, '');
 if (!apiBase.endsWith('/api/v1')) {
   apiBase = `${apiBase}/api/v1`;
@@ -21,5 +21,11 @@ export const API_ENDPOINTS = {
     DELETE: `${apiBase}/books`,
     GET_GENRES: `${apiBase}/books/genres`,
     GET_PUBLISHERS: `${apiBase}/books/publishers`,
+    UPLOAD_IMAGE: `${apiBase}/books/upload-image`,
+  },
+  STORAGE: {
+    UPLOAD: `${apiBase}/storage/upload`,
+    DELETE: `${apiBase}/storage/delete`,
+    METADATA: `${apiBase}/storage/metadata`,
   },
 };

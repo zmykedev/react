@@ -1,6 +1,8 @@
 import React from 'react';
 import type { BookSort, Book } from '../types/book';
 import { motion } from 'framer-motion';
+import { Card, Select, Button, Typography, Space, Radio } from 'antd';
+import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 
 interface BookSortingProps {
   sort: BookSort;
@@ -35,52 +37,38 @@ export const BookSorting: React.FC<BookSortingProps> = ({ sort, onSortChange }) 
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/80 dark:bg-fountain-blue-800/50 backdrop-blur-sm rounded-lg p-4 shadow-sm border border-fountain-blue-200 dark:border-fountain-blue-600"
+      className="w-full"
     >
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <h4 className="text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300">
-          Ordenar por:
-        </h4>
-        
-        <div className="flex items-center gap-3">
-          {/* Campo de ordenamiento */}
-          <select
-            value={sort.field}
-            onChange={(e) => handleFieldChange(e.target.value as keyof Book)}
-            className="px-3 py-2 border border-fountain-blue-300 dark:border-fountain-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-fountain-blue-500 focus:border-transparent bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-900 dark:text-fountain-blue-100 text-sm"
-          >
-            {SORT_FIELDS.map((field) => (
-              <option key={field.value} value={field.value}>
-                {field.label}
-              </option>
-            ))}
-          </select>
+      <Card className="rounded-lg shadow-sm border border-fountain-blue-200 dark:border-fountain-blue-600 p-4">
+        <Space className="flex flex-col sm:flex-row gap-4 items-center justify-between w-full">
+          <Typography.Text className="text-sm font-medium text-fountain-blue-700 dark:text-fountain-blue-300">
+            Ordenar por:
+          </Typography.Text>
+          
+          <Space size="small">
+            {/* Campo de ordenamiento */}
+            <Select
+              value={sort.field}
+              onChange={(value: keyof Book) => handleFieldChange(value)}
+              options={SORT_FIELDS}
+              className="min-w-[150px]"
+            />
 
-          {/* Dirección del ordenamiento */}
-          <div className="flex border border-fountain-blue-300 dark:border-fountain-blue-600 rounded-lg overflow-hidden">
-            <button
-              onClick={() => handleDirectionChange('asc')}
-              className={`px-3 py-2 text-sm transition-colors ${
-                sort.direction === 'asc'
-                  ? 'bg-fountain-blue-600 text-white'
-                  : 'bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-700 dark:text-fountain-blue-300 hover:bg-fountain-blue-100 dark:hover:bg-fountain-blue-700'
-              }`}
+            {/* Dirección del ordenamiento */}
+            <Radio.Group
+              value={sort.direction}
+              onChange={(e) => handleDirectionChange(e.target.value as 'asc' | 'desc')}
             >
-              ↑
-            </button>
-            <button
-              onClick={() => handleDirectionChange('desc')}
-              className={`px-3 py-2 text-sm transition-colors ${
-                sort.direction === 'desc'
-                  ? 'bg-fountain-blue-600 text-white'
-                  : 'bg-white/50 dark:bg-fountain-blue-900/50 text-fountain-blue-700 dark:text-fountain-blue-300 hover:bg-fountain-blue-100 dark:hover:bg-fountain-blue-700'
-              }`}
-            >
-              ↓
-            </button>
-          </div>
-        </div>
-      </div>
+              <Radio.Button value="asc">
+                <ArrowUpOutlined /> Asc
+              </Radio.Button>
+              <Radio.Button value="desc">
+                <ArrowDownOutlined /> Desc
+              </Radio.Button>
+            </Radio.Group>
+          </Space>
+        </Space>
+      </Card>
     </motion.div>
   );
 };
