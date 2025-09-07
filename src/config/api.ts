@@ -1,8 +1,9 @@
-let apiBase = (import.meta as any)?.env?.VITE_API_URL || 'https://cmpc-backend-production.up.railway.app ';
-apiBase = apiBase.replace(/\/$/, '');
-if (!apiBase.endsWith('/api/v1')) {
-  apiBase = `${apiBase}/api/v1`;
-}
+const apiBase = 'https://cpmc-backend-production.up.railway.app/api/v1';
+
+
+
+console.log('Final apiBase:', apiBase);
+console.log('========================');
 
 export const API_ENDPOINTS = {
   AUTH: {
