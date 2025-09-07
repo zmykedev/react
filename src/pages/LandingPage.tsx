@@ -8,13 +8,27 @@ import {
   Col, 
   Space,
   Avatar,
-  Divider
+  Divider,
+  Card,
+  Statistic,
+  Badge
 } from 'antd';
-import { BookOutlined, LoginOutlined } from '@ant-design/icons';
+import { 
+  BookOutlined, 
+  LoginOutlined, 
+  RocketOutlined,
+  SafetyOutlined,
+  ThunderboltOutlined,
+  GlobalOutlined,
+  TrophyOutlined,
+  StarOutlined
+} from '@ant-design/icons';
+import { motion } from 'framer-motion';
 
 import { LANDING_DATA } from '../data/landingData';
 import { useScrollToSection } from '../hooks/useScrollToSection';
 import { FeatureCard } from '../components/FeatureCard';
+import './LandingPage.css';
 
 const { Header } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -26,48 +40,71 @@ const LandingPage: React.FC = () => {
   return (
     <div className="snap-container">
       {/* Header fijo */}
-      <Header className="bg-fountain-blue-800 shadow-lg border-b border-fountain-blue-700 px-6 fixed top-0 left-0 right-0 z-50">
+      <Header className="bg-fountain-blue-800/95 backdrop-blur-md shadow-lg border-b border-fountain-blue-700 px-6 fixed top-0 left-0 right-0 z-50">
         <div className="flex justify-between items-center h-full">
-          <div className="flex items-center">
+          <motion.div 
+            className="flex items-center"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <Avatar 
               size={40} 
               style={{ backgroundColor: '#2da3ad' }}
               icon={<BookOutlined />}
+              className="shadow-lg"
             />
             <Typography.Title 
               level={3} 
-              className="ml-3 mb-0 text-white cursor-pointer"
+              className="ml-3 mb-0 text-white cursor-pointer hover:text-fountain-blue-200 transition-colors duration-300"
               onClick={() => navigate('/')}
             >
               CMPC-Inventario
             </Typography.Title>
-          </div>
+          </motion.div>
           
-          <div className="hidden md:flex items-center space-x-4">
+          <motion.div 
+            className="hidden md:flex items-center space-x-4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             {/* Enlaces de navegación */}
-            {LANDING_DATA.menuItems.map(item => (
-              <Button 
+            {LANDING_DATA.menuItems.map((item, index) => (
+              <motion.div
                 key={item.key}
-                type="text" 
-                icon={item.icon}
-                className="text-white hover:text-fountain-blue-200 hover:bg-fountain-blue-700"
-                onClick={() => scrollToSection(item.key)}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
               >
-                {item.label}
-              </Button>
+                <Button 
+                  type="text" 
+                  icon={item.icon}
+                  className="text-white hover:text-fountain-blue-200 hover:bg-fountain-blue-700/50 transition-all duration-300"
+                  onClick={() => scrollToSection(item.key)}
+                >
+                  {item.label}
+                </Button>
+              </motion.div>
             ))}
             
-            <Button 
-              type="primary" 
-              icon={<LoginOutlined />} 
-              size="large"
-              onClick={() => navigate('/login')}
-              style={{ backgroundColor: '#2da3ad', borderColor: '#2da3ad' }}
-              className="hover:bg-fountain-blue-500 hover:border-fountain-blue-500"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
             >
-              Acceder al Sistema
-            </Button>
-          </div>
+              <Button 
+                type="primary" 
+                icon={<LoginOutlined />} 
+                size="large"
+                onClick={() => navigate('/login')}
+                style={{ backgroundColor: '#2da3ad', borderColor: '#2da3ad' }}
+                className="hover:bg-fountain-blue-500 hover:border-fountain-blue-500 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Acceder al Sistema
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
       </Header>
 
@@ -76,167 +113,486 @@ const LandingPage: React.FC = () => {
         {/* Hero Section */}
         <section 
           id="inicio"
-          className="snap-section bg-gradient-to-br from-fountain-blue-800 via-fountain-blue-700 to-fountain-blue-600"
+          className="snap-section bg-gradient-to-br from-fountain-blue-800 via-fountain-blue-700 to-fountain-blue-600 relative overflow-hidden"
           tabIndex={0}
           role="region"
           aria-label="Sección de inicio"
         >
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <Title level={1} className="text-6xl font-bold text-white mb-6">
-              Sistema de{' '}
-              <span className="text-fountain-blue-200">Inventario de Libros</span>
-            </Title>
-            <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Gestiona eficientemente el inventario de libros de CMPC con control de stock en tiempo real, 
-              seguimiento de movimientos, exportación a Excel y reportes detallados en una plataforma moderna, 
-              segura y fácil de usar.
-            </Paragraph>
-            <Space size="large">
-              <Button 
-                type="primary" 
-                size="large" 
-                icon={<LoginOutlined />}
-                onClick={() => navigate('/login')}
-                style={{ backgroundColor: '#2da3ad', borderColor: '#2da3ad' }}
-                className="hover:bg-fountain-blue-500 hover:border-fountain-blue-500 shadow-lg"
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-10 w-32 h-32 bg-fountain-blue-400/20 rounded-full blur-xl"></div>
+            <div className="absolute top-40 right-20 w-48 h-48 bg-fountain-blue-300/15 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-fountain-blue-500/25 rounded-full blur-lg"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Badge 
+                count="NUEVO" 
+                style={{ backgroundColor: '#52c41a' }}
+                className="mb-6 badge-glow"
               >
-                Acceder al Sistema
-              </Button>
-              <Button 
-                size="large" 
-                icon={<BookOutlined />}
-                onClick={() => scrollToSection('sistema')}
-                className="border-white text-white hover:bg-white hover:text-fountain-blue-700 shadow-lg"
-              >
-                Ver Características
-              </Button>
-            </Space>
+                <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-500/20 rounded-full border border-fountain-blue-400/30">
+                  <RocketOutlined className="text-fountain-blue-200 mr-2" />
+                  <span className="text-fountain-blue-200 font-medium">Sistema Empresarial</span>
+                </div>
+              </Badge>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <Title level={1} className="text-6xl md:text-7xl font-bold text-white mb-6">
+                Sistema de{' '}
+                <span className="gradient-text">
+                  Inventario de Libros
+                </span>
+              </Title>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Gestiona eficientemente el inventario de libros de CMPC con control de stock en tiempo real, 
+                seguimiento de movimientos, exportación a Excel y reportes detallados en una plataforma moderna, 
+                segura y fácil de usar.
+              </Paragraph>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              <Space size="large" className="mb-12">
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  icon={<LoginOutlined />}
+                  onClick={() => navigate('/login')}
+                  style={{ 
+                    backgroundColor: '#2da3ad', 
+                    borderColor: '#2da3ad',
+                    height: '50px',
+                    paddingLeft: '30px',
+                    paddingRight: '30px'
+                  }}
+                  className="btn-gradient hover:bg-fountain-blue-500 hover:border-fountain-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 glow"
+                >
+                  Acceder al Sistema
+                </Button>
+                <Button 
+                  size="large" 
+                  icon={<BookOutlined />}
+                  onClick={() => scrollToSection('sistema')}
+                  className="border-white text-white hover:bg-white hover:text-fountain-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                  style={{ height: '50px', paddingLeft: '30px', paddingRight: '30px' }}
+                >
+                  Ver Características
+                </Button>
+              </Space>
+            </motion.div>
+            
+            {/* Stats Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              <Row gutter={[32, 16]} justify="center" className="mt-16">
+                <Col xs={12} sm={6}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating">
+                    <Statistic
+                      title={<span className="text-fountain-blue-200">Libros Gestionados</span>}
+                      value={1000}
+                      suffix="+"
+                      valueStyle={{ color: '#ffffff' }}
+                      prefix={<BookOutlined className="text-fountain-blue-300" />}
+                    />
+                  </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '0.5s' }}>
+                    <Statistic
+                      title={<span className="text-fountain-blue-200">Uptime</span>}
+                      value={99.9}
+                      suffix="%"
+                      valueStyle={{ color: '#ffffff' }}
+                      prefix={<ThunderboltOutlined className="text-fountain-blue-300" />}
+                    />
+                  </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '1s' }}>
+                    <Statistic
+                      title={<span className="text-fountain-blue-200">Seguridad</span>}
+                      value={100}
+                      suffix="%"
+                      valueStyle={{ color: '#ffffff' }}
+                      prefix={<SafetyOutlined className="text-fountain-blue-300" />}
+                    />
+                  </Card>
+                </Col>
+                <Col xs={12} sm={6}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '1.5s' }}>
+                    <Statistic
+                      title={<span className="text-fountain-blue-200">Satisfacción</span>}
+                      value={5}
+                      suffix="/5"
+                      valueStyle={{ color: '#ffffff' }}
+                      prefix={<StarOutlined className="text-fountain-blue-300" />}
+                    />
+                  </Card>
+                </Col>
+              </Row>
+            </motion.div>
           </div>
         </section>
 
         {/* Features Section */}
         <section 
           id="sistema"
-          className="snap-section bg-gradient-to-b from-white to-fountain-blue-50"
+          className="snap-section bg-gradient-to-b from-white to-fountain-blue-50 relative overflow-hidden"
           tabIndex={0}
           role="region"
           aria-label="Sección del sistema"
         >
-          <div className="max-w-7xl mx-auto px-6">
-            <Title level={2} className="text-center mb-16 text-fountain-blue-800">
-              ¿Por qué usar CMPC-Inventario?
-            </Title>
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-fountain-blue-200 to-fountain-blue-300 transform rotate-12 scale-150"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="text-center mb-16">
+                <Badge 
+                  count="CARACTERÍSTICAS" 
+                  style={{ backgroundColor: '#1890ff' }}
+                  className="mb-4"
+                >
+                  <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-100 rounded-full border border-fountain-blue-200">
+                    <TrophyOutlined className="text-fountain-blue-600 mr-2" />
+                    <span className="text-fountain-blue-600 font-medium">Funcionalidades Avanzadas</span>
+                  </div>
+                </Badge>
+                
+                <Title level={2} className="text-4xl md:text-5xl font-bold text-fountain-blue-800 mb-4">
+                  ¿Por qué elegir{' '}
+                  <span className="bg-gradient-to-r from-fountain-blue-600 to-fountain-blue-700 bg-clip-text text-transparent">
+                    CMPC-Inventario?
+                  </span>
+                </Title>
+                <Paragraph className="text-lg text-fountain-blue-600 max-w-2xl mx-auto">
+                  Descubre las características que hacen de nuestro sistema la mejor opción para gestionar tu inventario de libros
+                </Paragraph>
+              </div>
+            </motion.div>
             
             <Row gutter={[32, 32]} justify="center">
               {LANDING_DATA.features.map((feature, index) => (
                 <Col xs={24} md={12} lg={8} key={index}>
-                  <FeatureCard 
-                    icon={feature.icon}
-                    title={feature.title}
-                    description={feature.description}
-                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <FeatureCard 
+                      icon={feature.icon}
+                      title={feature.title}
+                      description={feature.description}
+                    />
+                  </motion.div>
                 </Col>
               ))}
             </Row>
             
-            <div className="text-center mt-12">
-              <Button 
-                type="primary" 
-                size="large" 
-                icon={<LoginOutlined />}
-                onClick={() => scrollToSection('contacto')}
-                style={{ backgroundColor: '#288592', borderColor: '#288592' }}
-                className="hover:bg-fountain-blue-700 hover:border-fountain-blue-700 shadow-lg"
-              >
-                Solicitar Acceso
-              </Button>
-            </div>
+            <motion.div 
+              className="text-center mt-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="inline-flex items-center gap-4">
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  icon={<LoginOutlined />}
+                  onClick={() => scrollToSection('contacto')}
+                  style={{ 
+                    backgroundColor: '#288592', 
+                    borderColor: '#288592',
+                    height: '50px',
+                    paddingLeft: '30px',
+                    paddingRight: '30px'
+                  }}
+                  className="hover:bg-fountain-blue-700 hover:border-fountain-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Solicitar Acceso
+                </Button>
+                <Button 
+                  size="large" 
+                  icon={<GlobalOutlined />}
+                  onClick={() => navigate('/login')}
+                  className="border-fountain-blue-600 text-fountain-blue-600 hover:bg-fountain-blue-600 hover:text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  style={{ height: '50px', paddingLeft: '30px', paddingRight: '30px' }}
+                >
+                  Demo en Vivo
+                </Button>
+              </div>
+            </motion.div>
           </div>
         </section>
 
         {/* CTA Section */}
         <section 
           id="contacto"
-          className="snap-section bg-gradient-to-r from-fountain-blue-700 to-fountain-blue-600"
+          className="snap-section bg-gradient-to-r from-fountain-blue-700 to-fountain-blue-600 relative overflow-hidden"
           tabIndex={0}
           role="region"
           aria-label="Sección de contacto"
         >
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <Title level={2} className="text-white mb-6">
-              ¿Listo para optimizar tu inventario?
-            </Title>
-            <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Accede al sistema de inventario de libros de CMPC y mejora la gestión de tu biblioteca con 
-              herramientas profesionales de control de stock, exportación a Excel y reportes avanzados.
-            </Paragraph>
-            <Space size="large">
-              <Button 
-                type="primary" 
-                size="large" 
-                icon={<LoginOutlined />}
-                style={{ backgroundColor: 'white', color: '#288592' }}
-                onClick={() => navigate('/login')}
-                className="hover:bg-fountain-blue-50 shadow-lg"
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-10 right-10 w-40 h-40 bg-fountain-blue-400/20 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-10 left-10 w-32 h-32 bg-fountain-blue-300/25 rounded-full blur-xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-fountain-blue-500/10 rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <Badge 
+                count="¡AHORA!" 
+                style={{ backgroundColor: '#ff4d4f' }}
+                className="mb-6 badge-glow"
               >
-                Acceder al Sistema
-              </Button>
-              <Button 
-                size="large" 
-                icon={<BookOutlined />}
-                style={{ borderColor: 'white', color: 'white' }}
-                onClick={() => navigate('/register')}
-                className="hover:bg-white hover:text-fountain-blue-700 shadow-lg"
-              >
-                Crear Cuenta
-              </Button>
-            </Space>
+                <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-500/20 rounded-full border border-fountain-blue-400/30">
+                  <RocketOutlined className="text-fountain-blue-200 mr-2" />
+                  <span className="text-fountain-blue-200 font-medium">Acceso Inmediato</span>
+                </div>
+              </Badge>
+            </motion.div>
             
-            <div className="mt-12">
-              <Button 
-                type="text" 
-                icon={<BookOutlined />}
-                onClick={() => scrollToSection('inicio')}
-                className="text-fountain-blue-200 hover:text-white"
-              >
-                Volver al Inicio
-              </Button>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <Title level={2} className="text-4xl md:text-5xl font-bold text-white mb-6">
+                ¿Listo para{' '}
+                <span className="bg-gradient-to-r from-fountain-blue-200 to-fountain-blue-300 bg-clip-text text-transparent">
+                  optimizar tu inventario?
+                </span>
+              </Title>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Accede al sistema de inventario de libros de CMPC y mejora la gestión de tu biblioteca con 
+                herramientas profesionales de control de stock, exportación a Excel y reportes avanzados.
+              </Paragraph>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Space size="large" className="mb-12">
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  icon={<LoginOutlined />}
+                  style={{ 
+                    backgroundColor: 'white', 
+                    color: '#288592',
+                    height: '50px',
+                    paddingLeft: '30px',
+                    paddingRight: '30px'
+                  }}
+                  onClick={() => navigate('/login')}
+                  className="hover:bg-fountain-blue-50 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Acceder al Sistema
+                </Button>
+                <Button 
+                  size="large" 
+                  icon={<BookOutlined />}
+                  style={{ 
+                    borderColor: 'white', 
+                    color: 'white',
+                    height: '50px',
+                    paddingLeft: '30px',
+                    paddingRight: '30px'
+                  }}
+                  onClick={() => navigate('/register')}
+                  className="hover:bg-white hover:text-fountain-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Crear Cuenta
+                </Button>
+              </Space>
+            </motion.div>
+            
+            <motion.div 
+              className="mt-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex flex-col items-center gap-4">
+                <Button 
+                  type="text" 
+                  icon={<BookOutlined />}
+                  onClick={() => scrollToSection('inicio')}
+                  className="text-fountain-blue-200 hover:text-white transition-colors duration-300"
+                >
+                  Volver al Inicio
+                </Button>
+                
+                {/* Trust Indicators */}
+                <div className="flex items-center gap-6 text-fountain-blue-200 text-sm">
+                  <div className="flex items-center gap-2">
+                    <SafetyOutlined />
+                    <span>100% Seguro</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ThunderboltOutlined />
+                    <span>Acceso Rápido</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StarOutlined />
+                    <span>5/5 Estrellas</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="snap-section bg-fountain-blue-950 text-white" tabIndex={0} role="region" aria-label="Pie de página">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <Title level={3} className="text-white mb-4">
-              CMPC-Inventario
-            </Title>
-            <Paragraph className="text-fountain-blue-200 mb-6">
-              Sistema profesional de gestión de inventario de libros para CMPC con exportación a Excel, 
-              control de stock y auditoría completa.
-            </Paragraph>
-            <Space size="large" className="mb-6">
-              <Button type="link" className="text-fountain-blue-200 hover:text-white">
-                Política de Privacidad
-              </Button>
-              <Button type="link" className="text-fountain-blue-200 hover:text-white">
-                Términos de Uso
-              </Button>
-              <Button type="link" className="text-fountain-blue-200 hover:text-white">
-                Soporte Técnico
-              </Button>
-              <Button 
-                type="link" 
-                className="text-fountain-blue-200 hover:text-white"
-                onClick={() => scrollToSection('inicio')}
-              >
-                Volver al Inicio
-              </Button>
-            </Space>
-            <Divider className="border-fountain-blue-800" />
-            <Text className="text-fountain-blue-300">
-              © 2024 CMPC-Inventario. Sistema interno de gestión de inventario.
-            </Text>
+        <footer className="snap-section bg-fountain-blue-950 text-white relative overflow-hidden" tabIndex={0} role="region" aria-label="Pie de página">
+          {/* Background Elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-fountain-blue-900 to-transparent"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-fountain-blue-600/10 rounded-full blur-2xl"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center justify-center mb-6">
+                <Avatar 
+                  size={60} 
+                  style={{ backgroundColor: '#2da3ad' }}
+                  icon={<BookOutlined />}
+                  className="mr-4"
+                />
+                <Title level={3} className="text-white mb-0">
+                  CMPC-Inventario
+                </Title>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <Paragraph className="text-fountain-blue-200 mb-8 max-w-2xl mx-auto text-lg">
+                Sistema profesional de gestión de inventario de libros para CMPC con exportación a Excel, 
+                control de stock y auditoría completa.
+              </Paragraph>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <Space size="large" className="mb-8">
+                <Button 
+                  type="link" 
+                  className="text-fountain-blue-200 hover:text-white transition-colors duration-300"
+                >
+                  Política de Privacidad
+                </Button>
+                <Button 
+                  type="link" 
+                  className="text-fountain-blue-200 hover:text-white transition-colors duration-300"
+                >
+                  Términos de Uso
+                </Button>
+                <Button 
+                  type="link" 
+                  className="text-fountain-blue-200 hover:text-white transition-colors duration-300"
+                >
+                  Soporte Técnico
+                </Button>
+                <Button 
+                  type="link" 
+                  className="text-fountain-blue-200 hover:text-white transition-colors duration-300"
+                  onClick={() => scrollToSection('inicio')}
+                >
+                  Volver al Inicio
+                </Button>
+              </Space>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Divider className="border-fountain-blue-800" />
+              
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <Text className="text-fountain-blue-300">
+                  © 2024 CMPC-Inventario. Sistema interno de gestión de inventario.
+                </Text>
+                
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-fountain-blue-300">
+                    <SafetyOutlined />
+                    <span>Desarrollado con ❤️ para CMPC</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </footer>
       </div>

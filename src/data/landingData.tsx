@@ -24,7 +24,7 @@ export const LANDING_DATA: LandingData = {
     {
       icon: <DatabaseOutlined style={{ fontSize: '32px' }} />,
       title: 'Gestión Centralizada y Segura',
-      description: 'Administra todo el inventario desde una sola plataforma con acceso controlado por roles (ADMIN, LIBRARIAN, USER) y sistema de auditoría completo.'
+      description: 'Administra todo el inventario desde una sola plataforma con autenticación JWT segura, sistema de auditoría completo y trazabilidad de todas las operaciones.'
     },
     {
       icon: <FileExcelOutlined style={{ fontSize: '32px' }} />,
