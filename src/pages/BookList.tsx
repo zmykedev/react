@@ -132,6 +132,20 @@ const BookList: React.FC = () => {
   
   }, [loadBooks]);
 
+  // Bloquear scroll del body cuando el modal esté abierto
+  useEffect(() => {
+    if (showForm) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup: restaurar scroll cuando el componente se desmonte
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showForm]);
+
   // Handlers memoizados para evitar re-renders
   const handleFiltersChange = useCallback((newFilters: BookFilters) => {
     setFilters(prevFilters => {
@@ -172,25 +186,19 @@ const BookList: React.FC = () => {
   const handleCreateBook = useCallback(async (bookData: any, imageFile?: File) => {
     try {
       setFormLoading(true);
-      console.log('📚 Creating book with data:', bookData);
-      console.log('📁 Image file:', imageFile);
+   
       
       const createdBook = await BookService.createBook(bookData);
-      console.log('✅ Book created successfully:', createdBook);
       
       // If there's an image file, upload it with the new book ID
       if (imageFile && createdBook.id) {
-        console.log('🖼️ Uploading image for book ID:', createdBook.id);
         try {
           const uploadResult = await BookService.uploadBookImage(imageFile, createdBook.id);
-          console.log('✅ Image uploaded and book updated:', uploadResult);
           message.success('Libro creado e imagen subida exitosamente');
         } catch (imageError) {
-          console.error('❌ Error uploading image:', imageError);
           message.warning('Libro creado pero hubo un error al subir la imagen');
         }
       } else {
-        console.log('ℹ️ No image file to upload. imageFile:', !!imageFile, 'bookId:', createdBook.id);
         message.success('Libro creado exitosamente');
       }
       
@@ -409,7 +417,7 @@ const BookList: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 overflow-y-auto"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2"
             onClick={handleFormCancel}
           >
             <motion.div

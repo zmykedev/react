@@ -63,10 +63,7 @@ export const UserProfile: React.FC = () => {
           <Text>{user.firstName} {user.lastName}</Text>
         </div>
         
-        <div className="flex justify-between w-full">
-          <Text strong>Rol:</Text>
-          <Tag color="blue">{user.role}</Tag>
-        </div>
+        
         
         <div className="flex justify-between w-full">
           <Text strong>Creado:</Text>

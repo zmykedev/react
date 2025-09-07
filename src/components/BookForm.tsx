@@ -109,90 +109,25 @@ export const BookForm: React.FC<BookFormProps> = ({
     validateField(name, formData[name]);
   };
 
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => { // No longer needed
-  //   const file = e.target.files?.[0];
-  //   if (file) {
-  //     // Validate file type
-  //     if (!file.type.startsWith('image/')) {
-  //       setErrors(prev => ({ ...prev, image: 'Solo se permiten archivos de imagen' }));
-  //       return;
-  //     }
-
-  //     // Validate file size (max 5MB)
-  //     if (file.size > 5 * 1024 * 1024) {
-  //       setErrors(prev => ({ ...prev, image: 'La imagen no puede ser mayor a 5MB' }));
-  //       return;
-  //     }
-
-  //     setErrors(prev => ({ ...prev, image: undefined }));
-  //     handleChange('image', file);
-
-  //     // Create preview
-  //     const reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       setImagePreview(e.target?.result as string);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
-  // const handleSubmit = async (e: React.FormEvent) => { // Replaced by Ant Design Form's onFinish
-  //   e.preventDefault();
-    
-  //   // Mark all fields as touched
-  //   const allFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability'];
-  //   setTouched(new Set(allFields));
-
-  //   // Validar todos los campos antes de enviar
-  //   let hasErrors = false;
-  //   const newErrors: BookFormErrors = {};
-    
-  //   allFields.forEach(field => {
-  //     validateField(field, formData[field]);
-  //     if (errors[field]) {
-  //       hasErrors = true;
-  //     }
-  //   });
-    
-  //   if (!hasErrors) {
-  //     await onSubmit(formData);
-  //   }
-  // };
-
-  // const isFieldValid = (field: keyof BookFormData) => { // No longer needed with Ant Design Form validation
-  //   return formData[field] && !errors[field];
-  // };
-
-  // Validación simple para habilitar el botón
-  // const requiredFields: (keyof BookFormData)[] = ['title', 'author', 'publisher', 'price', 'genre', 'availability']; // No longer needed
-  
-  // const canSubmit = requiredFields.every(field => { // No longer needed
-  //   const value = formData[field];
-    
-  //   if (field === 'availability') {
-  //     return typeof value === 'boolean';
-  //   }
-    
-  //   if (field === 'price') {
-  //     return typeof value === 'number' && value >= 0;
-  //   }
-    
-  //   // Para campos de texto
-  //   return typeof value === 'string' && value.trim().length > 0;
-  // });
-  
-  // console.log('=== VALIDACIÓN SIMPLE ==='); // No longer needed
-  // console.log('formData:', formData); // No longer needed
-  // console.log('canSubmit:', canSubmit); // No longer needed
-  // console.log('=== FIN VALIDACIÓN ==='); // No longer needed
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/80 dark:bg-fountain-blue-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-fountain-blue-200 dark:border-fountain-blue-600 max-w-5xl mx-auto w-full"
+      className="bg-white/90 dark:bg-fountain-blue-800/70 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-fountain-blue-300 dark:border-fountain-blue-700 max-w-2xl xl:max-w-none mx-auto w-full"
+      style={{
+        minWidth: 360,
+        maxWidth: 600,
+        maxHeight: 800,
+        display: 'flex',
+        flexDirection: 'column'
+      }}
     >
-      <Typography.Title level={2} className="text-2xl font-bold text-fountain-blue-900 dark:text-fountain-blue-100 mb-4 text-center">
+      <Typography.Title
+        level={2}
+        className="text-2xl font-bold text-fountain-blue-900 dark:text-fountain-blue-100 mb-4 text-center"
+        style={{ marginBottom: 16, fontSize: 22 }}
+      >
         {isEditMode ? 'Editar Libro' : 'Agregar Nuevo Libro'}
       </Typography.Title>
 
@@ -202,41 +137,34 @@ export const BookForm: React.FC<BookFormProps> = ({
           try {
             let finalFormData = { ...formData, ...values };
             let imageFile: File | undefined;
-            
-            console.log('📝 Form submitted with values:', values);
-            console.log('📝 Form data image:', formData.image);
-            console.log('📝 Is edit mode:', isEditMode);
-            console.log('📝 Book ID:', book?.id);
-            
+
             // If there's a new image file, handle it based on mode
             if (formData.image) {
-              console.log('🖼️ Image file found:', formData.image);
               if (isEditMode && book?.id) {
                 // In edit mode, upload image with bookId
-                console.log('✏️ Edit mode: uploading image immediately');
                 const imageUrl = await handleImageUpload(formData.image);
                 finalFormData.imageUrl = imageUrl;
               } else {
                 // In create mode, keep the file for later upload
-                console.log('➕ Create mode: keeping file for later upload');
                 imageFile = formData.image;
               }
               // Remove the file object as it's not needed in the final submission
               delete finalFormData.image;
-            } else {
-              console.log('ℹ️ No image file in form data');
             }
-            
-            console.log('📤 Submitting with finalFormData:', finalFormData);
-            console.log('📤 Submitting with imageFile:', imageFile);
-            
+
             await onSubmit(finalFormData, imageFile);
           } catch (error) {
             console.error('Error submitting form:', error);
           }
         }}
         initialValues={formData}
-        className="space-y-4"
+        className="space-y-3"
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          paddingRight: 8,
+          marginBottom: 0,
+        }}
       >
         {/* Título - Ancho completo */}
         <Form.Item
@@ -245,27 +173,33 @@ export const BookForm: React.FC<BookFormProps> = ({
           rules={[{ required: true, message: 'Por favor ingresa el título del libro' }]}
           validateStatus={errors.title ? 'error' : undefined}
           help={errors.title}
+          style={{ marginBottom: 10 }}
         >
           <Input
             placeholder="Ingresa el título del libro"
             onChange={(e) => handleChange('title', e.target.value)}
             onBlur={() => handleBlur('title')}
+            style={{ height: 32, fontSize: 14 }}
+            maxLength={80}
           />
         </Form.Item>
 
         {/* Primera fila: Autor, Editorial, Género */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-2" style={{ marginBottom: 8 }}>
           <Form.Item
             label="Autor *"
             name="author"
             rules={[{ required: true, message: 'Por favor ingresa el nombre del autor' }]}
             validateStatus={errors.author ? 'error' : undefined}
             help={errors.author}
+            style={{ marginBottom: 0 }}
           >
             <Input
               placeholder="Ingresa el nombre del autor"
               onChange={(e) => handleChange('author', e.target.value)}
               onBlur={() => handleBlur('author')}
+              style={{ height: 32, fontSize: 14 }}
+              maxLength={60}
             />
           </Form.Item>
 
@@ -275,11 +209,14 @@ export const BookForm: React.FC<BookFormProps> = ({
             rules={[{ required: true, message: 'Por favor selecciona una editorial' }]}
             validateStatus={errors.publisher ? 'error' : undefined}
             help={errors.publisher}
+            style={{ marginBottom: 0 }}
           >
             <Select
               placeholder="Selecciona una editorial"
               onChange={(value) => handleChange('publisher', value)}
               onBlur={() => handleBlur('publisher')}
+              style={{ height: 32, fontSize: 14 }}
+              dropdownStyle={{ fontSize: 14 }}
             >
               <Select.Option value="">Selecciona una editorial</Select.Option>
               {publishers && publishers.length > 0 ? (
@@ -288,25 +225,7 @@ export const BookForm: React.FC<BookFormProps> = ({
                     {publisher}
                   </Select.Option>
                 ))
-              ) : (
-                <>
-                  <Select.Option value="Penguin Random House">Penguin Random House</Select.Option>
-                  <Select.Option value="HarperCollins">HarperCollins</Select.Option>
-                  <Select.Option value="Simon & Schuster">Simon & Schuster</Select.Option>
-                  <Select.Option value="Hachette Book Group">Hachette Book Group</Select.Option>
-                  <Select.Option value="Macmillan Publishers">Macmillan Publishers</Select.Option>
-                  <Select.Option value="Scholastic">Scholastic</Select.Option>
-                  <Select.Option value="Bloomsbury">Bloomsbury</Select.Option>
-                  <Select.Option value="Faber & Faber">Faber & Faber</Select.Option>
-                  <Select.Option value="Vintage Books">Vintage Books</Select.Option>
-                  <Select.Option value="Knopf Doubleday">Knopf Doubleday</Select.Option>
-                  <Select.Option value="W.W. Norton">W.W. Norton</Select.Option>
-                  <Select.Option value="Houghton Mifflin Harcourt">Houghton Mifflin Harcourt</Select.Option>
-                  <Select.Option value="Little, Brown and Company">Little, Brown and Company</Select.Option>
-                  <Select.Option value="Crown Publishing">Crown Publishing</Select.Option>
-                  <Select.Option value="Other">Otra</Select.Option>
-                </>
-              )}
+              ) : null}
             </Select>
           </Form.Item>
 
@@ -316,11 +235,14 @@ export const BookForm: React.FC<BookFormProps> = ({
             rules={[{ required: true, message: 'Por favor selecciona un género' }]}
             validateStatus={errors.genre ? 'error' : undefined}
             help={errors.genre}
+            style={{ marginBottom: 0 }}
           >
             <Select
               placeholder="Selecciona un género"
               onChange={(value) => handleChange('genre', value)}
               onBlur={() => handleBlur('genre')}
+              style={{ height: 32, fontSize: 14 }}
+              dropdownStyle={{ fontSize: 14 }}
             >
               <Select.Option value="">Selecciona un género</Select.Option>
               {genres && genres.length > 0 ? (
@@ -355,13 +277,17 @@ export const BookForm: React.FC<BookFormProps> = ({
         </div>
 
         {/* Segunda fila: Precio, Disponibilidad */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2" style={{ marginBottom: 8 }}>
           <Form.Item
             label="Precio *"
             name="price"
-            rules={[{ required: true, message: 'Por favor ingresa el precio' }, { type: 'number', min: 0, message: 'El precio debe ser un número positivo' }]} // Adjust message for consistency
+            rules={[
+              { required: true, message: 'Por favor ingresa el precio' },
+              { type: 'number', min: 0, message: 'El precio debe ser un número positivo' }
+            ]}
             validateStatus={errors.price ? 'error' : undefined}
             help={errors.price}
+            style={{ marginBottom: 0 }}
           >
             <InputNumber
               min={0}
@@ -370,6 +296,7 @@ export const BookForm: React.FC<BookFormProps> = ({
               onChange={(value) => handleChange('price', value)}
               onBlur={() => handleBlur('price')}
               className="w-full"
+              style={{ height: 32, fontSize: 14, width: '100%' }}
             />
           </Form.Item>
 
@@ -377,11 +304,13 @@ export const BookForm: React.FC<BookFormProps> = ({
             label="Disponibilidad"
             name="availability"
             valuePropName="checked"
+            style={{ marginBottom: 0, display: 'flex', alignItems: 'center' }}
           >
             <Switch
               checkedChildren="Disponible"
               unCheckedChildren="No disponible"
               onChange={(checked) => handleChange('availability', checked)}
+              style={{ height: 24 }}
             />
           </Form.Item>
         </div>
@@ -390,11 +319,14 @@ export const BookForm: React.FC<BookFormProps> = ({
         <Form.Item
           label="Descripción (opcional)"
           name="description"
+          style={{ marginBottom: 8 }}
         >
           <Input.TextArea
-            rows={2}
+            rows={1}
+            maxLength={120}
             placeholder="Ingresa una breve descripción del libro..."
             onChange={(e) => handleChange('description', e.target.value)}
+            style={{ fontSize: 14, resize: 'none', minHeight: 32, maxHeight: 48 }}
           />
         </Form.Item>
 
@@ -404,6 +336,7 @@ export const BookForm: React.FC<BookFormProps> = ({
           name="image"
           validateStatus={errors.image ? 'error' : undefined}
           help={errors.image}
+          style={{ marginBottom: 8 }}
         >
           <Upload
             accept="image/*"
@@ -434,10 +367,11 @@ export const BookForm: React.FC<BookFormProps> = ({
               }
             }}
           >
-            <Button 
-              icon={<UploadOutlined />} 
+            <Button
+              icon={<UploadOutlined />}
               loading={uploadingImage}
               disabled={uploadingImage}
+              style={{ height: 32, fontSize: 14 }}
             >
               {uploadingImage ? 'Subiendo...' : 'Seleccionar Archivo'}
             </Button>
@@ -447,7 +381,8 @@ export const BookForm: React.FC<BookFormProps> = ({
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-24 h-24 object-cover rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600"
+                className="w-20 h-20 object-cover rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600"
+                style={{ width: 64, height: 64 }}
               />
               <Button
                 type="text"
@@ -460,6 +395,7 @@ export const BookForm: React.FC<BookFormProps> = ({
                 className="absolute -top-2 -right-2 text-red-500 hover:text-red-700"
                 shape="circle"
                 size="small"
+                style={{ width: 20, height: 20, minWidth: 20, minHeight: 20, padding: 0 }}
               />
             </div>
           )}
@@ -469,10 +405,11 @@ export const BookForm: React.FC<BookFormProps> = ({
         </Form.Item>
 
         {/* Botones - Centrados y más compactos */}
-        <Space className="flex justify-end pt-2">
+        <Space className="flex justify-end pt-2" style={{ marginTop: 0 }}>
           <Button
             onClick={onCancel}
-            size="large"
+            size="middle"
+            style={{ height: 32, fontSize: 14 }}
           >
             Cancelar
           </Button>
@@ -481,9 +418,16 @@ export const BookForm: React.FC<BookFormProps> = ({
             htmlType="submit"
             loading={isLoading || uploadingImage}
             disabled={isLoading || uploadingImage}
-            size="large"
+            size="middle"
+            style={{ height: 32, fontSize: 14 }}
           >
-            {isLoading ? 'Guardando...' : uploadingImage ? 'Subiendo imagen...' : (isEditMode ? 'Actualizar' : 'Crear')}
+            {isLoading
+              ? 'Guardando...'
+              : uploadingImage
+              ? 'Subiendo imagen...'
+              : isEditMode
+              ? 'Actualizar'
+              : 'Crear'}
           </Button>
         </Space>
       </Form>

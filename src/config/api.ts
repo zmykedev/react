@@ -1,4 +1,4 @@
-let apiBase = (import.meta as any)?.env?.VITE_API_URL || 'https://cpmc-back-production.up.railway.app';
+let apiBase = (import.meta as any)?.env?.VITE_API_URL || 'https://cpmc-back-production.up.railway.app'
 apiBase = apiBase.replace(/\/$/, '');
 if (!apiBase.endsWith('/api/v1')) {
   apiBase = `${apiBase}/api/v1`;

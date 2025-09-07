@@ -113,6 +113,41 @@ class AuditLogService {
     }
   }
 
+  async getInventoryLogs(filters: AuditLogFilters = {}): Promise<ApiResponse<AuditLogResponse>> {
+    try {
+      const params = new URLSearchParams();
+      
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params.append(key, value.toString());
+        }
+      });
+
+      const response = await fetch(`${this.baseUrl}/inventory?${params.toString()}`, {
+        headers: AuditLogService.getAuthHeaders(),
+      });
+      
+      const result = await AuditLogService.handleResponse<ApiResponse<AuditLogResponse>>(response);
+      return result;
+    } catch (error) {
+      console.error('Error fetching inventory logs:', error);
+      throw error;
+    }
+  }
+
+  async deleteAllLogs(): Promise<ApiResponse<number>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/delete-all`, {
+        method: 'DELETE',
+        headers: AuditLogService.getAuthHeaders(),
+      });
+      return await AuditLogService.handleResponse<ApiResponse<number>>(response);
+    } catch (error) {
+      console.error('Error deleting all logs:', error);
+      throw error;
+    }
+  }
+
   async getStats(): Promise<ApiResponse<AuditLogStats>> {
     try {
       const response = await fetch(`${this.baseUrl}/stats`, {
@@ -176,6 +211,41 @@ class AuditLogService {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error exporting audit logs:', error);
+      throw error;
+    }
+  }
+
+  async exportInventoryLogs(filters: AuditLogFilters = {}): Promise<void> {
+    try {
+      const params = new URLSearchParams();
+      
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params.append(key, value.toString());
+        }
+      });
+
+      const response = await fetch(`${this.baseUrl}/inventory/export?${params.toString()}`, {
+        headers: AuditLogService.getAuthHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      
+      // Crear y descargar el archivo
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `inventory-logs-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting inventory audit logs:', error);
       throw error;
     }
   }

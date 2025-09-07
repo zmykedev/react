@@ -56,12 +56,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
       onClick: () => navigate('/profile')
     },
     {
-      key: 'settings',
-      label: 'Configuración',
-      icon: <SettingOutlined />,
-      onClick: () => navigate('/settings')
-    },
-    {
       type: 'divider' as const
     },
     {
@@ -164,20 +158,12 @@ const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
         <Space size="middle" className="ml-6">
           {user ? (
             <>
-              {/* Notificaciones */}
-              <Badge count={5} size="small">
-                <Button 
-                  type="text" 
-                  icon={<BellOutlined />} 
-                />
-              </Badge>
-              
               {/* Información del usuario */}
-              <Space direction="vertical" size={0} className="text-right">
+              <Space direction="vertical" size={0} className="text-right p-6">
                 <Text strong className="block">
                   {userName || user?.firstName || 'Usuario'}
                 </Text>
-                <Text type="secondary" className="text-xs block">
+                <Text  type="secondary" className="text-xs block">
                   {userEmail || user?.email || 'usuario@cmpc.com'}
                 </Text>
               </Space>

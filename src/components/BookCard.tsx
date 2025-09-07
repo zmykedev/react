@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Book } from '../types/book';
 import { motion } from 'framer-motion';
-import { Card, Tag, Typography, Space, Button } from 'antd';
-import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { Tag, Typography, Space, Button } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, BookOutlined } from '@ant-design/icons';
 
 interface BookCardProps {
   book: Book;
@@ -34,96 +34,190 @@ export const BookCard: React.FC<BookCardProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ y: -5 }}
-      className="w-full"
+      initial={{ opacity: 0, scale: 0.95, rotateX: -10 }}
+      animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+      whileHover={{ 
+        y: -8, 
+        scale: 1.02,
+        rotateX: 5,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      className="w-full group"
     >
-      <Card
-        hoverable
-        className="rounded-lg shadow-sm border border-fountain-blue-200 dark:border-fountain-blue-600 overflow-hidden transition-all duration-300"
-        cover={
-          <div className="relative h-48 bg-gradient-to-br from-fountain-blue-100 to-fountain-blue-200 dark:from-fountain-blue-700 dark:to-fountain-blue-800">
-            {book.imageUrl ? (
-              <img
-                alt={book.title}
-                src={book.imageUrl}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <svg className="w-16 h-16 text-fountain-blue-400 dark:text-fountain-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-            )}
+      <div className="relative bg-white/95 dark:bg-fountain-blue-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-fountain-blue-200/50 dark:border-fountain-blue-600/50 overflow-hidden transition-all duration-500 hover:shadow-fountain-blue-500/20 hover:shadow-3xl">
+        {/* Gradient overlay for modern effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-fountain-blue-50/30 via-transparent to-fountain-blue-100/20 dark:from-fountain-blue-900/30 dark:via-transparent dark:to-fountain-blue-800/20 pointer-events-none" />
+        
+        {/* Image section with modern styling */}
+        <div className="relative h-52 bg-gradient-to-br from-fountain-blue-100 via-fountain-blue-50 to-fountain-blue-200 dark:from-fountain-blue-700 dark:via-fountain-blue-800 dark:to-fountain-blue-900 overflow-hidden">
+          {/* Decorative geometric shapes */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-fountain-blue-300/20 to-transparent dark:from-fountain-blue-500/20 rounded-full -translate-y-16 translate-x-16" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-fountain-blue-400/15 to-transparent dark:from-fountain-blue-600/15 rounded-full translate-y-12 -translate-x-12" />
+          
+          {book.imageUrl ? (
+            <motion.img
+              alt={book.title}
+              src={book.imageUrl}
+              className="w-full h-full object-contain relative z-10"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full relative z-10">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <BookOutlined className="w-20 h-20 text-fountain-blue-400 dark:text-fountain-blue-500" />
+              </motion.div>
+            </div>
+          )}
+          
+          {/* Modern availability tag */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-4 right-4 z-20"
+          >
             <Tag
-              color={book.availability ? 'green' : 'red'}
-              className="absolute top-3 right-3 text-xs font-medium"
+              color={book.availability ? 'success' : 'error'}
+              className="px-3 py-1 rounded-full text-xs font-semibold shadow-lg border-0 backdrop-blur-sm"
+              style={{
+                background: book.availability 
+                  ? 'linear-gradient(135deg, #52c41a, #73d13d)' 
+                  : 'linear-gradient(135deg, #ff4d4f, #ff7875)',
+                color: 'white',
+                fontWeight: 600,
+                textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                zIndex: 20
+              }}
             >
               {book.availability ? 'Disponible' : 'No disponible'}
             </Tag>
-          </div>
-        }
-      >
-        <Card.Meta
-          title={
-            <Typography.Title level={4} className="text-lg font-semibold text-fountain-blue-900 dark:text-fountain-blue-100 mb-2 line-clamp-2">
+          </motion.div>
+        </div>
+
+        {/* Content section with modern typography */}
+        <div className="p-6 relative z-10">
+          {/* Title with 3D effect */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-4"
+          >
+            <Typography.Title
+              level={4}
+              className="text-xl font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight"
+              style={{
+                background: 'none',
+                fontWeight: 700,
+                margin: 0,
+                // Simple shadow for both light and dark themes
+                textShadow: `
+                  0 2px 4px rgba(0, 0, 0, 0.1),
+                  0 1px 2px rgba(0, 0, 0, 0.06)
+                `,
+              }}
+            >
               {book.title}
             </Typography.Title>
-          }
-          description={
-            <Space direction="vertical" size={4} className="w-full">
-              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
-                <span className="font-medium">Autor:</span> {book.author}
+          </motion.div>
+
+          {/* Book details with modern layout */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-3 mb-6"
+          >
+           
+            
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-fountain-blue-400 rounded-full" />
+              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300 font-medium truncate">
+                {book.publisher}
               </Typography.Text>
-              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
-                <span className="font-medium">Editorial:</span> {book.publisher}
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-fountain-blue-400 rounded-full" />
+              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300 font-medium truncate">
+                {book.genre}
               </Typography.Text>
-              <Typography.Text className="text-sm text-fountain-blue-700 dark:text-fountain-blue-300">
-                <span className="font-medium">Género:</span> {book.genre}
+            </div>
+          </motion.div>
+
+          {/* Price and date section */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex items-center justify-between mb-6"
+          >
+            <div className="bg-gradient-to-r from-fountain-blue-500 to-fountain-blue-600 text-white px-4 py-2 rounded-xl shadow-lg">
+              <Typography.Text className="text-xl font-bold text-white">
+                {formatPrice(book.price)}
               </Typography.Text>
-              <div className="flex items-center justify-between pt-2">
-                <Typography.Text className="text-xl font-bold text-fountain-blue-600">
-                  {formatPrice(book.price)}
-                </Typography.Text>
-                <Typography.Text type="secondary" className="text-xs">
-                  {formatDate(book.createdAt)}
-                </Typography.Text>
-              </div>
-            </Space>
-          }
-        />
-        <Space className="flex justify-end mt-4 w-full">
-          {onView && (
+            </div>
+            <Typography.Text type="secondary" className="text-xs opacity-70">
+              {formatDate(book.createdAt)}
+            </Typography.Text>
+          </motion.div>
+
+          {/* Ver button in top left corner */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="absolute top-7 left-[190px] z-20"
+          >
             <Button
               icon={<EyeOutlined />}
-              onClick={() => onView(book)}
+              onClick={() => onView && onView(book)}
+              className="h-8 px-3 rounded-full border-fountain-blue-300 text-fountain-blue-600 hover:bg-fountain-blue-50 dark:border-fountain-blue-600 dark:text-fountain-blue-400 dark:hover:bg-fountain-blue-800/50 transition-all duration-300 hover:scale-105"
+              style={{ fontWeight: 500, minWidth: 70 }}
+              disabled={!onView}
+              size="small"
             >
               Ver
             </Button>
-          )}
-          
-          {onEdit && (
+          </motion.div>
+
+          {/* Edit and Delete buttons at bottom right */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex justify-center gap-2"
+          >
             <Button
               icon={<EditOutlined />}
-              onClick={() => onEdit(book)}
+              onClick={() => onEdit && onEdit(book)}
+              className="h-10 px-4 rounded-xl border-fountain-blue-300 text-fountain-blue-600 hover:bg-fountain-blue-50 dark:border-fountain-blue-600 dark:text-fountain-blue-400 dark:hover:bg-fountain-blue-800/50 transition-all duration-300 hover:scale-105"
+              style={{ fontWeight: 500, minWidth: 90 }}
+              disabled={!onEdit}
             >
               Editar
             </Button>
-          )}
-          
-          {onDelete && (
             <Button
               icon={<DeleteOutlined />}
               danger
-              onClick={() => onDelete(book.id)}
+              onClick={() => onDelete && onDelete(book.id)}
+              className="h-10 px-4 rounded-xl transition-all duration-300 hover:scale-105"
+              style={{ fontWeight: 500, minWidth: 90 }}
+              disabled={!onDelete}
             >
               Eliminar
             </Button>
-          )}
-        </Space>
-      </Card>
+          </motion.div>
+        </div>
+
+        {/* Subtle border glow effect */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-fountain-blue-400/20 via-transparent to-fountain-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      </div>
     </motion.div>
   );
 };
