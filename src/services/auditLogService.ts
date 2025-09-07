@@ -57,6 +57,12 @@ export interface AuditLogStats {
   recentActivity: AuditLog[];
 }
 
+export interface InventoryFilterOptions {
+  genres: string[];
+  publishers: string[];
+  authors: string[];
+}
+
 export interface ApiResponse<T> {
   status: boolean;
   data: {
@@ -270,6 +276,18 @@ class AuditLogService {
       return await AuditLogService.handleResponse<ApiResponse<AuditLog>>(response);
     } catch (error) {
       console.error('Error fetching audit log by ID:', error);
+      throw error;
+    }
+  }
+
+  async getInventoryFilterOptions(): Promise<ApiResponse<InventoryFilterOptions>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/inventory/filter-options`, {
+        headers: AuditLogService.getAuthHeaders(),
+      });
+      return await AuditLogService.handleResponse<ApiResponse<InventoryFilterOptions>>(response);
+    } catch (error) {
+      console.error('Error fetching inventory filter options:', error);
       throw error;
     }
   }

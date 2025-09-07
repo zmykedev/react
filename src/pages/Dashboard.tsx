@@ -32,6 +32,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { auditLogService } from '../services/auditLogService';
+import type { InventoryFilterOptions } from '../services/auditLogService';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -94,10 +95,16 @@ const Dashboard: React.FC = () => {
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [logDetailVisible, setLogDetailVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [filterOptions, setFilterOptions] = useState<InventoryFilterOptions>({
+    genres: [],
+    publishers: [],
+    authors: [],
+  });
 
   useEffect(() => {
     fetchLogs();
     fetchStats();
+    fetchFilterOptions();
   }, []);
 
   useEffect(() => {
@@ -125,6 +132,18 @@ const Dashboard: React.FC = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFilterOptions = async () => {
+    try {
+      const response = await auditLogService.getInventoryFilterOptions();
+      if (response.status === true && response.data?.status === 'success') {
+        setFilterOptions(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar opciones de filtros:', error);
+      // No mostrar error al usuario, solo usar opciones por defecto
     }
   };
 
@@ -578,11 +597,10 @@ const Dashboard: React.FC = () => {
                   size="large"
                   className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
-                  <Option value="INVENTORY_ADDED">📚 Agregado</Option>
-                  <Option value="INVENTORY_UPDATED">📝 Actualizado</Option>
-                  <Option value="INVENTORY_REMOVED">🗑️ Eliminado</Option>
-                  <Option value="INVENTORY_VIEWED">👁️ Visualizado</Option>
-                  <Option value="INVENTORY_SEARCHED">🔍 Búsqueda</Option>
+                  <Option value="INVENTORY_ADDED">📚 Nuevo libro agregado al inventario</Option>
+                  <Option value="INVENTORY_UPDATED">📝 Libro actualizado en el inventario</Option>
+                  <Option value="INVENTORY_REMOVED">🗑️ Libro eliminado del inventario</Option>
+                  <Option value="INVENTORY_SEARCHED">🔍 Búsqueda en inventario realizada</Option>
                 </Select>
               </Col>
               <Col xs={24} sm={24} md={8}>
@@ -611,34 +629,52 @@ const Dashboard: React.FC = () => {
             {/* Segunda fila - Filtros específicos del libro */}
             <Row gutter={[16, 16]} style={{ marginBottom: '16px' }}>
               <Col xs={24} sm={8} md={8}>
-                <Input
+                <Select
                   placeholder="👤 Autor del libro"
+                  allowClear
                   value={filters.author}
-                  onChange={(e) => handleFilterChange('author', e.target.value)}
-                  onPressEnter={handleSearch}
+                  onChange={(value) => handleFilterChange('author', value)}
                   size="large"
-                  className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                />
+                  className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  {filterOptions.authors.map((author) => (
+                    <Option key={author} value={author}>
+                      {author}
+                    </Option>
+                  ))}
+                </Select>
               </Col>
               <Col xs={24} sm={8} md={8}>
-                <Input
+                <Select
                   placeholder="🏢 Editorial"
+                  allowClear
                   value={filters.publisher}
-                  onChange={(e) => handleFilterChange('publisher', e.target.value)}
-                  onPressEnter={handleSearch}
+                  onChange={(value) => handleFilterChange('publisher', value)}
                   size="large"
-                  className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                />
+                  className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  {filterOptions.publishers.map((publisher) => (
+                    <Option key={publisher} value={publisher}>
+                      {publisher}
+                    </Option>
+                  ))}
+                </Select>
               </Col>
               <Col xs={24} sm={8} md={8}>
-                <Input
+                <Select
                   placeholder="📖 Género"
+                  allowClear
                   value={filters.genre}
-                  onChange={(e) => handleFilterChange('genre', e.target.value)}
-                  onPressEnter={handleSearch}
+                  onChange={(value) => handleFilterChange('genre', value)}
                   size="large"
-                  className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                />
+                  className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
+                  {filterOptions.genres.map((genre) => (
+                    <Option key={genre} value={genre}>
+                      {genre}
+                    </Option>
+                  ))}
+                </Select>
               </Col>
             </Row>
 
@@ -652,7 +688,7 @@ const Dashboard: React.FC = () => {
                   flexWrap: 'wrap'
                 }}>
                   <Button
-                    success
+                    
                     icon={exportLoading ? <ReloadOutlined spin /> : <DownloadOutlined />}
                     onClick={handleExport}
                     loading={exportLoading}

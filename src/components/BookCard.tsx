@@ -56,23 +56,32 @@ export const BookCard: React.FC<BookCardProps> = ({
           
           {book.imageUrl ? (
             <motion.img
-              alt={book.title}
+              alt={`Portada del libro: ${book.title}`}
               src={book.imageUrl}
               className="w-full h-full object-contain relative z-10"
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.nextElementSibling?.classList.remove('hidden');
+              }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             />
-          ) : (
-            <div className="flex items-center justify-center h-full relative z-10">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0.7 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <BookOutlined className="w-20 h-20 text-fountain-blue-400 dark:text-fountain-blue-500" />
-              </motion.div>
-            </div>
-          )}
+          ) : null}
+          
+          {/* Fallback icon - hidden by default, shown when image fails */}
+          <div className="flex items-center justify-center h-full relative z-10 hidden">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0.7 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <BookOutlined className="w-20 h-20 text-fountain-blue-400 dark:text-fountain-blue-500" />
+            </motion.div>
+          </div>
           
           {/* Modern availability tag */}
           <motion.div
