@@ -60,8 +60,11 @@ const Login: React.FC = () => {
       
       const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           email: values.email,

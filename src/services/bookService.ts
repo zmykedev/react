@@ -13,9 +13,30 @@ export class BookService {
   private static getAuthHeaders(): HeadersInit {
     const token = useStore.getState().getAccessToken();
     
-    return token ? {
-      'Authorization': `Bearer ${token}`,
-    } : {};
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return headers;
+  }
+
+  private static async makeRequest<T>(
+    url: string, 
+    options: RequestInit = {}
+  ): Promise<T> {
+    const defaultOptions: RequestInit = {
+      mode: 'cors',
+      credentials: 'include',
+      headers: this.getAuthHeaders(),
+    };
+
+    const response = await fetch(url, { ...defaultOptions, ...options });
+    return this.handleResponse<T>(response);
   }
 
   private static async handleResponse<T>(response: Response): Promise<T> {
@@ -45,16 +66,10 @@ export class BookService {
       }
     };
 
-    const response = await fetch(API_ENDPOINTS.BOOKS.SEARCH, {
-      method: 'POST', // Cambiar a POST para enviar JSON
-      headers: {
-        ...this.getAuthHeaders(),
-        'Content-Type': 'application/json',
-      },
+    const responseData = await this.makeRequest<any>(API_ENDPOINTS.BOOKS.SEARCH, {
+      method: 'POST',
       body: JSON.stringify(requestData),
     });
-    
-    const responseData = await this.handleResponse<any>(response);
     
     // Extraer el campo 'data' de la respuesta envuelta por ResponseInterceptor
     const booksData = responseData.data || responseData;
