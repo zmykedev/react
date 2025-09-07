@@ -1,31 +1,55 @@
-#Step1. Build
-#1. Image base
-FROM node:20 as build
+# Multi-stage build for React/Vite frontend
+FROM node:18-alpine AS builder
 
-#2. Crear carpeta de trabajo
 WORKDIR /app
 
-#3. Instalar pnpm
+# Install pnpm
 RUN npm install -g pnpm
 
-#4. Copiar package.json y package-lock.json
-COPY package*.json ./
+# Copy package files
+COPY package*.json pnpm-lock.yaml* ./
 
-#5. Instalar dependencias
-RUN pnpm install
+# Install dependencies with pnpm (better handling of optional dependencies)
+RUN pnpm install --frozen-lockfile
 
-#6. Copiar el resto del codigo
+# Copy source code
 COPY . .
 
-#7. Build
+# Build the application
 RUN pnpm run build
 
-#Step2. Servir la app con nginx
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+# Production stage with Nginx
+FROM nginx:alpine AS production
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Create non-root user for security (nginx user already exists, just create our own)
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Change ownership
+RUN chown -R appuser:appgroup /usr/share/nginx/html && \
+    chown -R appuser:appgroup /var/cache/nginx && \
+    chown -R appuser:appgroup /var/log/nginx && \
+    chown -R appuser:appgroup /etc/nginx/conf.d
+
+# Create nginx pid directory
+RUN mkdir -p /var/run/nginx && \
+    chown -R appuser:appgroup /var/run/nginx
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
 EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
-
-
-
-

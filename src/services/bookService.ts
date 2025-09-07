@@ -31,7 +31,7 @@ export class BookService {
   ): Promise<T> {
     const defaultOptions: RequestInit = {
       mode: 'cors',
-      credentials: 'omit',
+      credentials: 'include',
       headers: this.getAuthHeaders(),
     };
 
