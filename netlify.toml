@@ -4,5 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  VITE_API_URL = "https://cmpc-backend-production.up.railway.app"
+  VITE_API_URL = "https://cmpc-backend-production-c95a.up.railway.app"
   VITE_NODE_ENV = "production"
+  # Enable Netlify build logs
+  NETLIFY_BUILD_DEBUG = "true"
+  # Custom log location (if needed)
+  # LOG_LEVEL = "debug"
+  # LOG_OUTPUT = "stdout"
+  # You can add more logging-related env vars as needed
