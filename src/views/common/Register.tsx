@@ -104,8 +104,11 @@ const Register: React.FC = () => {
       
       const response = await fetch(API_ENDPOINTS.AUTH.REGISTER, {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           firstName: values.firstName,

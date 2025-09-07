@@ -110,6 +110,8 @@ class AuditLogService {
       });
 
       const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<AuditLogResponse>>(response);
@@ -130,6 +132,8 @@ class AuditLogService {
       });
 
       const response = await fetch(`${this.baseUrl}/inventory?${params.toString()}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       
@@ -145,6 +149,8 @@ class AuditLogService {
     try {
       const response = await fetch(`${this.baseUrl}/delete-all`, {
         method: 'DELETE',
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<number>>(response);
@@ -157,6 +163,8 @@ class AuditLogService {
   async getStats(): Promise<ApiResponse<AuditLogStats>> {
     try {
       const response = await fetch(`${this.baseUrl}/stats`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<AuditLogStats>>(response);
@@ -173,6 +181,8 @@ class AuditLogService {
   }>> {
     try {
       const response = await fetch(`${this.baseUrl}/actions`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<{
@@ -197,6 +207,8 @@ class AuditLogService {
       });
 
       const response = await fetch(`${this.baseUrl}/export?${params.toString()}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
 
@@ -232,6 +244,8 @@ class AuditLogService {
       });
 
       const response = await fetch(`${this.baseUrl}/inventory/export?${params.toString()}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
 
@@ -259,6 +273,8 @@ class AuditLogService {
   async cleanupOldLogs(days: number = 90): Promise<ApiResponse<{ deletedCount: number }>> {
     try {
       const response = await fetch(`${this.baseUrl}/cleanup?days=${days}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<{ deletedCount: number }>>(response);
@@ -271,6 +287,8 @@ class AuditLogService {
   async getLogById(id: number): Promise<ApiResponse<AuditLog>> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<AuditLog>>(response);
@@ -283,6 +301,8 @@ class AuditLogService {
   async getInventoryFilterOptions(): Promise<ApiResponse<InventoryFilterOptions>> {
     try {
       const response = await fetch(`${this.baseUrl}/inventory/filter-options`, {
+        mode: 'cors',
+        credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
       return await AuditLogService.handleResponse<ApiResponse<InventoryFilterOptions>>(response);
