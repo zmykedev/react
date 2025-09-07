@@ -1,4 +1,4 @@
-const apiBase = (import.meta as any)?.env?.VITE_API_URL || 'https://cpmc-backend-production.up.railway.app/api/v1';
+const apiBase = (import.meta as any)?.env?.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 console.log('=== FRONTEND API CONFIG ===');
 console.log('VITE_API_URL from env:', (import.meta as any)?.env?.VITE_API_URL);
