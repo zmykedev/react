@@ -9,21 +9,18 @@ import {
   Space,
   Avatar,
   Divider,
-  Card,
-  Statistic,
-  Badge
+  Card
 } from 'antd';
 import { 
   BookOutlined, 
   LoginOutlined, 
-  RocketOutlined,
   SafetyOutlined,
   ThunderboltOutlined,
-  GlobalOutlined,
-  TrophyOutlined,
   StarOutlined
 } from '@ant-design/icons';
+import StackIcon from 'tech-stack-icons';
 import { motion } from 'framer-motion';
+
 
 import { LANDING_DATA } from '../data/landingData';
 import { useScrollToSection } from '../hooks/useScrollToSection';
@@ -131,16 +128,7 @@ const LandingPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Badge 
-                count="NUEVO" 
-                style={{ backgroundColor: '#52c41a' }}
-                className="mb-6 badge-glow"
-              >
-                <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-500/20 rounded-full border border-fountain-blue-400/30">
-                  <RocketOutlined className="text-fountain-blue-200 mr-2" />
-                  <span className="text-fountain-blue-200 font-medium">Sistema Empresarial</span>
-                </div>
-              </Badge>
+  
             </motion.div>
             
             <motion.div
@@ -150,8 +138,8 @@ const LandingPage: React.FC = () => {
             >
               <Title level={1} className="text-6xl md:text-7xl font-bold text-white mb-6">
                 Sistema de{' '}
-                <span className="gradient-text">
-                  Inventario de Libros
+                <span className="gradient-text-tailwind">
+                  Gestión de Inventarios
                 </span>
               </Title>
             </motion.div>
@@ -162,9 +150,9 @@ const LandingPage: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Gestiona eficientemente el inventario de libros de CMPC con control de stock en tiempo real, 
-                seguimiento de movimientos, exportación a Excel y reportes detallados en una plataforma moderna, 
-                segura y fácil de usar.
+                Plataforma empresarial de gestión de inventarios con control de stock en tiempo real, 
+                seguimiento de movimientos, exportación a Excel y reportes detallados. Desarrollada con 
+                tecnologías modernas para máxima eficiencia y seguridad.
               </Paragraph>
             </motion.div>
             
@@ -172,6 +160,7 @@ const LandingPage: React.FC = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
+              className='mb-[-30px] '
             >
               <Space size="large" className="mb-12">
                 <Button 
@@ -204,53 +193,54 @@ const LandingPage: React.FC = () => {
             
             {/* Stats Section */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, scale: 0 }}
+              animate={{ opacity: 1, y: 0, scale: 1.4 }}
               transition={{ duration: 0.8, delay: 0.8 }}
             >
-              <Row gutter={[32, 16]} justify="center" className="mt-16">
-                <Col xs={12} sm={6}>
-                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating">
-                    <Statistic
-                      title={<span className="text-fountain-blue-200">Libros Gestionados</span>}
-                      value={1000}
-                      suffix="+"
-                      valueStyle={{ color: '#ffffff' }}
-                      prefix={<BookOutlined className="text-fountain-blue-300" />}
-                    />
+              <Row
+                gutter={[24, 16]}
+                justify="center"
+                className="mt-16 flex flex-wrap items-center justify-center px-4 py-6"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
+              >
+                <Col xs={12} sm={8} md={6} lg={3}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating-1 flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <StackIcon name="typescript" className="w-10 h-10 text-fountain-blue-300 mb-2" />
+                      <div className="text-fountain-blue-200 font-medium text-sm">TypeScript</div>
+                    </div>
                   </Card>
                 </Col>
-                <Col xs={12} sm={6}>
-                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '0.5s' }}>
-                    <Statistic
-                      title={<span className="text-fountain-blue-200">Uptime</span>}
-                      value={99.9}
-                      suffix="%"
-                      valueStyle={{ color: '#ffffff' }}
-                      prefix={<ThunderboltOutlined className="text-fountain-blue-300" />}
-                    />
+                <Col xs={12} sm={8} md={6} lg={3}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating-2 flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <StackIcon name="nestjs" className="w-10 h-10 text-fountain-blue-300 mb-2" />
+                      <div className="text-fountain-blue-200 font-medium text-sm">NestJS</div>
+                    </div>
                   </Card>
                 </Col>
-                <Col xs={12} sm={6}>
-                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '1s' }}>
-                    <Statistic
-                      title={<span className="text-fountain-blue-200">Seguridad</span>}
-                      value={100}
-                      suffix="%"
-                      valueStyle={{ color: '#ffffff' }}
-                      prefix={<SafetyOutlined className="text-fountain-blue-300" />}
-                    />
+                <Col xs={12} sm={8} md={6} lg={3}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating-3 flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <StackIcon name="react" className="w-10 h-10 text-fountain-blue-300 mb-2" />
+                      <div className="text-fountain-blue-200 font-medium text-sm">React</div>
+                    </div>
                   </Card>
                 </Col>
-                <Col xs={12} sm={6}>
-                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating" style={{ animationDelay: '1.5s' }}>
-                    <Statistic
-                      title={<span className="text-fountain-blue-200">Satisfacción</span>}
-                      value={5}
-                      suffix="/5"
-                      valueStyle={{ color: '#ffffff' }}
-                      prefix={<StarOutlined className="text-fountain-blue-300" />}
-                    />
+                <Col xs={12} sm={8} md={6} lg={3}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating-4 flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <StackIcon name="railway" className="w-10 h-10 text-fountain-blue-300 mb-2" />
+                      <div className="text-fountain-blue-200 font-medium text-sm">Railway</div>
+                    </div>
+                  </Card>
+                </Col>
+                <Col xs={12} sm={8} md={6} lg={3}>
+                  <Card className="bg-fountain-blue-700/30 border-fountain-blue-500/30 backdrop-blur-sm hover-lift floating-5 flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <StackIcon name="gcloud" className="w-10 h-10 text-fountain-blue-300 mb-2" />
+                      <div className="text-fountain-blue-200 font-medium text-sm">GCP</div>
+                    </div>
                   </Card>
                 </Col>
               </Row>
@@ -272,35 +262,7 @@ const LandingPage: React.FC = () => {
           </div>
           
           <div className="max-w-7xl mx-auto px-6 relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-center mb-16">
-                <Badge 
-                  count="CARACTERÍSTICAS" 
-                  style={{ backgroundColor: '#1890ff' }}
-                  className="mb-4"
-                >
-                  <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-100 rounded-full border border-fountain-blue-200">
-                    <TrophyOutlined className="text-fountain-blue-600 mr-2" />
-                    <span className="text-fountain-blue-600 font-medium">Funcionalidades Avanzadas</span>
-                  </div>
-                </Badge>
-                
-                <Title level={2} className="text-4xl md:text-5xl font-bold text-fountain-blue-800 mb-4">
-                  ¿Por qué elegir{' '}
-                  <span className="bg-gradient-to-r from-fountain-blue-600 to-fountain-blue-700 bg-clip-text text-transparent">
-                    CMPC-Inventario?
-                  </span>
-                </Title>
-                <Paragraph className="text-lg text-fountain-blue-600 max-w-2xl mx-auto">
-                  Descubre las características que hacen de nuestro sistema la mejor opción para gestionar tu inventario de libros
-                </Paragraph>
-              </div>
-            </motion.div>
+            
             
             <Row gutter={[32, 32]} justify="center">
               {LANDING_DATA.features.map((feature, index) => (
@@ -328,33 +290,7 @@ const LandingPage: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="inline-flex items-center gap-4">
-                <Button 
-                  type="primary" 
-                  size="large" 
-                  icon={<LoginOutlined />}
-                  onClick={() => scrollToSection('contacto')}
-                  style={{ 
-                    backgroundColor: '#288592', 
-                    borderColor: '#288592',
-                    height: '50px',
-                    paddingLeft: '30px',
-                    paddingRight: '30px'
-                  }}
-                  className="hover:bg-fountain-blue-700 hover:border-fountain-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Solicitar Acceso
-                </Button>
-                <Button 
-                  size="large" 
-                  icon={<GlobalOutlined />}
-                  onClick={() => navigate('/login')}
-                  className="border-fountain-blue-600 text-fountain-blue-600 hover:bg-fountain-blue-600 hover:text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  style={{ height: '50px', paddingLeft: '30px', paddingRight: '30px' }}
-                >
-                  Demo en Vivo
-                </Button>
-              </div>
+             
             </motion.div>
           </div>
         </section>
@@ -381,16 +317,7 @@ const LandingPage: React.FC = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <Badge 
-                count="¡AHORA!" 
-                style={{ backgroundColor: '#ff4d4f' }}
-                className="mb-6 badge-glow"
-              >
-                <div className="inline-flex items-center px-4 py-2 bg-fountain-blue-500/20 rounded-full border border-fountain-blue-400/30">
-                  <RocketOutlined className="text-fountain-blue-200 mr-2" />
-                  <span className="text-fountain-blue-200 font-medium">Acceso Inmediato</span>
-                </div>
-              </Badge>
+         
             </motion.div>
             
             <motion.div
@@ -401,7 +328,7 @@ const LandingPage: React.FC = () => {
             >
               <Title level={2} className="text-4xl md:text-5xl font-bold text-white mb-6">
                 ¿Listo para{' '}
-                <span className="bg-gradient-to-r from-fountain-blue-200 to-fountain-blue-300 bg-clip-text text-transparent">
+                <span className="gradient-text-tailwind">
                   optimizar tu inventario?
                 </span>
               </Title>
@@ -414,7 +341,7 @@ const LandingPage: React.FC = () => {
               viewport={{ once: true }}
             >
               <Paragraph className="text-xl text-fountain-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Accede al sistema de inventario de libros de CMPC y mejora la gestión de tu biblioteca con 
+                Accede al sistema de gestión de inventarios y mejora la administración de tu empresa con 
                 herramientas profesionales de control de stock, exportación a Excel y reportes avanzados.
               </Paragraph>
             </motion.div>
@@ -532,8 +459,8 @@ const LandingPage: React.FC = () => {
               viewport={{ once: true }}
             >
               <Paragraph className="text-fountain-blue-200 mb-8 max-w-2xl mx-auto text-lg">
-                Sistema profesional de gestión de inventario de libros para CMPC con exportación a Excel, 
-                control de stock y auditoría completa.
+                Sistema profesional de gestión de inventarios desarrollado con tecnologías modernas para 
+                optimizar la administración empresarial con máxima eficiencia y seguridad.
               </Paragraph>
             </motion.div>
             
@@ -582,13 +509,13 @@ const LandingPage: React.FC = () => {
               
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <Text className="text-fountain-blue-300">
-                  © 2024 CMPC-Inventario. Sistema interno de gestión de inventario.
+                  © 2024 CMPC-Inventario. Sistema profesional de gestión de inventarios.
                 </Text>
                 
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 text-fountain-blue-300">
                     <SafetyOutlined />
-                    <span>Desarrollado con ❤️ para CMPC</span>
+                    <span>Desarrollado con ❤️ para empresas innovadoras</span>
                   </div>
                 </div>
               </div>

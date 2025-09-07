@@ -30,12 +30,25 @@
 }
 
 .gradient-text {
-  background: linear-gradient(-45deg, #2da3ad, #288592, #fountain-blue-200, #fountain-blue-300);
+  background: linear-gradient(-45deg, #2da3ad, #288592, #e0f7fa, #b2ebf2);
   background-size: 400% 400%;
   animation: gradient-shift 3s ease infinite;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Gradient text with Tailwind compatibility */
+.gradient-text-tailwind {
+  background: linear-gradient(45deg, #67e8f9, #22d3ee, #06b6d4, #0891b2);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: bold;
 }
 
 /* Floating Animation */
@@ -50,6 +63,112 @@
 
 .floating {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Unique Floating Animations for Tech Cards */
+@keyframes float-1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes float-2 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(-1deg);
+  }
+}
+
+@keyframes float-3 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(0.5deg);
+  }
+}
+
+@keyframes float-4 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-0.5deg);
+  }
+}
+
+@keyframes float-5 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1.5deg);
+  }
+}
+
+@keyframes float-6 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(-1.5deg);
+  }
+}
+
+@keyframes float-7 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-11px) rotate(0.8deg);
+  }
+}
+
+@keyframes float-8 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(-0.8deg);
+  }
+}
+
+/* Unique floating classes */
+.floating-1 {
+  animation: float-1 3.2s ease-in-out infinite;
+}
+
+.floating-2 {
+  animation: float-2 2.8s ease-in-out infinite;
+}
+
+.floating-3 {
+  animation: float-3 3.5s ease-in-out infinite;
+}
+
+.floating-4 {
+  animation: float-4 2.6s ease-in-out infinite;
+}
+
+.floating-5 {
+  animation: float-5 3.1s ease-in-out infinite;
+}
+
+.floating-6 {
+  animation: float-6 2.9s ease-in-out infinite;
+}
+
+.floating-7 {
+  animation: float-7 3.3s ease-in-out infinite;
+}
+
+.floating-8 {
+  animation: float-8 2.7s ease-in-out infinite;
 }
 
 /* Pulse Animation */
