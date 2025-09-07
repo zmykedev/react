@@ -1,8 +1,5 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../views/common/Login';
-import Register from '../views/common/Register';
-import LandingPage from '../pages/LandingPage';
 import useStore from '../store';
 
 interface ProtectedGuestRouteProps {
@@ -26,17 +23,17 @@ export function GuestRoutes() {
         path="/" 
         element={
           <ProtectedGuestRoute>
-            <LandingPage />
+            <div>Landing Page Placeholder</div>
           </ProtectedGuestRoute>
         } 
       />
       <Route 
         path="/login" 
-        element={<Login />}
+        element={<div>Login Placeholder</div>}
       />
       <Route 
         path="/register" 
-        element={<Register />}
+        element={<div>Register Placeholder</div>}
       />
     </Routes>
   );
