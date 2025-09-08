@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
     GET_GENRES: `${apiBase}/books/genres`,
     GET_PUBLISHERS: `${apiBase}/books/publishers`,
     UPLOAD_IMAGE_ONLY: `${apiBase}/books/upload-image-only`,
+    EXPORT_CSV: `${apiBase}/books/export/csv`,
   },
   STORAGE: {
     UPLOAD: `${apiBase}/storage/upload`,

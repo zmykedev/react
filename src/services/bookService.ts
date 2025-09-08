@@ -267,4 +267,60 @@ export class BookService {
     
     return this.handleResponse<any>(response);
   }
+
+  /**
+   * Exporta todos los libros a formato CSV
+   * Incluye toda la información relevante de los libros
+   */
+  static async exportBooksToCSV(): Promise<void> {
+    try {
+      const token = useStore.getState().getAccessToken();
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      console.log('📥 Iniciando exportación de libros a CSV...');
+
+      const response = await fetch(API_ENDPOINTS.BOOKS.EXPORT_CSV, {
+        method: 'GET',
+        headers,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // Crear un blob con el contenido CSV
+      const blob = await response.blob();
+      
+      // Crear un enlace temporal para descargar
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Nombre del archivo con fecha y hora
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+      const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
+      const filename = `libros-inventario-${dateStr}-${timeStr}.csv`;
+      
+      link.setAttribute('download', filename);
+      
+      // Agregar al DOM, hacer clic y remover
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Limpiar la URL del objeto
+      window.URL.revokeObjectURL(url);
+      
+      console.log('✅ Exportación de libros completada:', filename);
+    } catch (error: any) {
+      console.error('❌ Error exporting books to CSV:', error);
+      throw new Error(error?.message || 'Error al exportar libros a CSV');
+    }
+  }
 }
