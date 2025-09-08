@@ -192,37 +192,6 @@ export class BookService {
     return Array.isArray(publishers) ? publishers : [];
   }
 
-  static async uploadBookImage(imageFile: File, bookId: string): Promise<{ success: boolean; message: string; imageUrl: string; originalName: string; size: number; mimeType: string }> {
-    try {
-      const formData = new FormData();
-      formData.append('file', imageFile); // 👈 Cambiar a 'file' según documentación de NestJS
-      formData.append('bookId', bookId);
-
-      const token = useStore.getState().getAccessToken();
-      const headers: HeadersInit = {};
-      
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      // NO agregar Content-Type para FormData - el browser lo maneja automáticamente
-
-      const response = await fetch(API_ENDPOINTS.BOOKS.UPLOAD_IMAGE, {
-        method: 'POST',
-        headers,
-        body: formData,
-      });
-      
-      const responseData = await this.handleResponse<any>(response);
-      
-      // Extract the data from the response wrapper
-      const data = responseData.data || responseData;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Error uploading book image:', error);
-      throw new Error(error?.message || 'Error al subir la imagen del libro');
-    }
-  }
 
   static async uploadImageOnly(imageFile: File): Promise<{ success: boolean; message: string; imageUrl: string; originalName: string; size: number; mimeType: string }> {
     try {
