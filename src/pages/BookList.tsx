@@ -183,23 +183,15 @@ const BookList: React.FC = () => {
     });
   }, []);
 
-  const handleCreateBook = useCallback(async (bookData: any, imageFile?: File) => {
+  const handleCreateBook = useCallback(async (bookData: any) => {
     try {
       setFormLoading(true);
-   
       
       const createdBook = await BookService.createBook(bookData);
+      message.success('Libro creado exitosamente');
       
-      // If there's an image file, upload it with the new book ID
-      if (imageFile && createdBook.id) {
-        try {
-          const uploadResult = await BookService.uploadBookImage(imageFile, createdBook.id);
-          message.success('Libro creado e imagen subida exitosamente');
-        } catch (imageError) {
-          message.warning('Libro creado pero hubo un error al subir la imagen');
-        }
-      } else {
-        message.success('Libro creado exitosamente');
+      // Force refresh if book has image to ensure it displays correctly
+      if (createdBook.imageUrl) {
       }
       
       // Reload books and close form
@@ -396,18 +388,16 @@ const BookList: React.FC = () => {
         </div>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="mt-8 text-center">
-            <BookPagination
-              currentPage={memoizedPagination.page}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              itemsPerPage={memoizedPagination.limit}
-              onPageChange={handlePageChange}
-              onItemsPerPageChange={handleItemsPerPageChange}
-            />
-          </div>
-        )}
+        <div className="mt-8 text-center">
+          <BookPagination
+            currentPage={memoizedPagination.page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            itemsPerPage={memoizedPagination.limit}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handleItemsPerPageChange}
+          />
+        </div>
       </Layout.Content>
 
       {/* Modal del formulario */}
@@ -476,17 +466,31 @@ const BookList: React.FC = () => {
                 <div className="space-y-4">
                   {selectedBook.imageUrl ? (
                     <img
+                      key={selectedBook.imageUrl} // Force re-render when URL changes
                       src={selectedBook.imageUrl}
                       alt={selectedBook.title}
                       className="w-full h-64 object-cover rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600"
+                      
+                      onError={(e) => {
+                        console.error(`❌ Failed to load modal image: ${selectedBook.title}`, selectedBook.imageUrl);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) {
+                          fallback.style.display = 'flex';
+                        }
+                      }}
                     />
-                  ) : (
-                    <div className="w-full h-64 bg-gradient-to-br from-fountain-blue-100 to-fountain-blue-200 dark:from-fountain-blue-700 dark:to-fountain-blue-800 rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600 flex items-center justify-center">
-                      <svg className="w-24 h-24 text-fountain-blue-400 dark:text-fountain-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    </div>
-                  )}
+                  ) : null}
+                  
+                  {/* Fallback placeholder - shown when no image or on error */}
+                  <div 
+                    className={`w-full h-64 bg-gradient-to-br from-fountain-blue-100 to-fountain-blue-200 dark:from-fountain-blue-700 dark:to-fountain-blue-800 rounded-lg border border-fountain-blue-300 dark:border-fountain-blue-600 items-center justify-center ${selectedBook.imageUrl ? 'hidden' : 'flex'}`}
+                  >
+                    <svg className="w-24 h-24 text-fountain-blue-400 dark:text-fountain-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
                   
                   {/* Badge de disponibilidad */}
                   <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${

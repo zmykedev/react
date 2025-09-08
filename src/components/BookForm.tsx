@@ -9,7 +9,7 @@ type BookFormErrors = Partial<Record<keyof BookFormData, string>>;
 
 interface BookFormProps {
   book?: Book;
-  onSubmit: (bookData: BookFormData, imageFile?: File) => Promise<void>;
+  onSubmit: (bookData: BookFormData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
   genres: string[];
@@ -43,29 +43,47 @@ export const BookForm: React.FC<BookFormProps> = ({
 
   const isEditMode = !!book;
 
-  // Function to handle image upload
+  // Function to validate image file
+  const validateImageFile = (file: File): string | null => {
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Tipo de archivo no permitido. Solo se permiten: JPG, PNG, GIF, WebP';
+    }
+
+    // Check file size (5MB max)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return 'El archivo es demasiado grande. Tamaño máximo: 5MB';
+    }
+
+    return null; // No errors
+  };
+
+  // Function to handle image upload - simple approach
   const handleImageUpload = async (file: File): Promise<string> => {
     try {
       setUploadingImage(true);
       
-      // If we're in edit mode and have a book ID, upload with bookId
-      if (isEditMode && book?.id) {
-        const uploadResult = await BookService.uploadBookImage(file, book.id);
-        message.success('Imagen subida exitosamente');
-        return uploadResult.url;
-      } else {
-        // For new books, we'll upload the image after creating the book
-        // For now, just return a placeholder or handle differently
-        message.warning('La imagen se subirá después de crear el libro');
-        return '';
+      // Validate file before upload
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        throw new Error(validationError);
       }
-    } catch (error) {
-      message.error('Error al subir la imagen');
+      
+      // Always use uploadImageOnly for simplicity - just get the URL
+      const uploadResult = await BookService.uploadImageOnly(file);
+      message.success('Imagen subida exitosamente');
+      return uploadResult.imageUrl;
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Error al subir la imagen';
+      message.error(errorMessage);
       throw error;
     } finally {
       setUploadingImage(false);
     }
   };
+
 
   // Validación simple
   const validateField = (name: keyof BookFormData, value: any) => {
@@ -136,25 +154,19 @@ export const BookForm: React.FC<BookFormProps> = ({
         onFinish={async (values) => {
           try {
             let finalFormData = { ...formData, ...values };
-            let imageFile: File | undefined;
 
-            // If there's a new image file, handle it based on mode
+            // If there's a new image file, upload it first
             if (formData.image) {
-              if (isEditMode && book?.id) {
-                // In edit mode, upload image with bookId
-                const imageUrl = await handleImageUpload(formData.image);
-                finalFormData.imageUrl = imageUrl;
-              } else {
-                // In create mode, keep the file for later upload
-                imageFile = formData.image;
-              }
+              const imageUrl = await handleImageUpload(formData.image);
+              finalFormData.imageUrl = imageUrl;
               // Remove the file object as it's not needed in the final submission
               delete finalFormData.image;
             }
 
-            await onSubmit(finalFormData, imageFile);
+            await onSubmit(finalFormData);
           } catch (error) {
             console.error('Error submitting form:', error);
+            message.error('Error al procesar el formulario. Inténtalo de nuevo.');
           }
         }}
         initialValues={formData}
@@ -339,20 +351,19 @@ export const BookForm: React.FC<BookFormProps> = ({
           style={{ marginBottom: 8 }}
         >
           <Upload
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
             beforeUpload={() => false} // Prevent automatic upload
             showUploadList={false}
             onChange={(info) => {
               const file = info.fileList[0]?.originFileObj;
               if (file) {
-                if (!file.type.startsWith('image/')) {
-                  setErrors(prev => ({ ...prev, image: 'Solo se permiten archivos de imagen' }));
+                // Use the same validation function
+                const validationError = validateImageFile(file);
+                if (validationError) {
+                  setErrors(prev => ({ ...prev, image: validationError }));
                   return;
                 }
-                if (file.size > 5 * 1024 * 1024) {
-                  setErrors(prev => ({ ...prev, image: 'La imagen no puede ser mayor a 5MB' }));
-                  return;
-                }
+                
                 setErrors(prev => ({ ...prev, image: undefined }));
                 handleChange('image', file);
 
@@ -364,6 +375,7 @@ export const BookForm: React.FC<BookFormProps> = ({
               } else {
                 setImagePreview(null);
                 handleChange('image', undefined);
+                setErrors(prev => ({ ...prev, image: undefined }));
               }
             }}
           >
@@ -402,6 +414,7 @@ export const BookForm: React.FC<BookFormProps> = ({
           <Typography.Text type="secondary" className="block text-xs mt-1">
             Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB
           </Typography.Text>
+          
         </Form.Item>
 
         {/* Botones - Centrados y más compactos */}

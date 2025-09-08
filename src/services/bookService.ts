@@ -41,6 +41,25 @@ export class BookService {
 
   private static async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
+      // Handle specific 498 status code by logging out
+      if (response.status === 498) {
+        console.warn('🔒 Status 498 detected, logging out...', {
+          status: response.status,
+          url: response.url
+        });
+        
+        // Clear session and redirect to login
+        const { logout } = useStore.getState();
+        logout();
+        
+        // Redirect to login page
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        
+        throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+      }
+      
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
@@ -173,27 +192,70 @@ export class BookService {
     return Array.isArray(publishers) ? publishers : [];
   }
 
-  static async uploadBookImage(imageFile: File, bookId: string): Promise<{ success: boolean; message: string; originalName: string; size: number; mimeType: string }> {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    formData.append('bookId', bookId);
+  static async uploadBookImage(imageFile: File, bookId: string): Promise<{ success: boolean; message: string; imageUrl: string; originalName: string; size: number; mimeType: string }> {
+    try {
+      const formData = new FormData();
+      formData.append('file', imageFile); // 👈 Cambiar a 'file' según documentación de NestJS
+      formData.append('bookId', bookId);
 
-    const response = await fetch(API_ENDPOINTS.BOOKS.UPLOAD_IMAGE, {
-      method: 'POST',
-      headers: {
-        ...this.getAuthHeaders(),
-        // Don't set Content-Type header, let the browser set it with boundary for FormData
-      },
-      body: formData,
-    });
-    
-    const responseData = await this.handleResponse<any>(response);
-    
-    // Extract the data from the response wrapper
-    const data = responseData.data || responseData;
-    
-    return data;
+      const token = useStore.getState().getAccessToken();
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      // NO agregar Content-Type para FormData - el browser lo maneja automáticamente
+
+      const response = await fetch(API_ENDPOINTS.BOOKS.UPLOAD_IMAGE, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      
+      const responseData = await this.handleResponse<any>(response);
+      
+      // Extract the data from the response wrapper
+      const data = responseData.data || responseData;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Error uploading book image:', error);
+      throw new Error(error?.message || 'Error al subir la imagen del libro');
+    }
   }
+
+  static async uploadImageOnly(imageFile: File): Promise<{ success: boolean; message: string; imageUrl: string; originalName: string; size: number; mimeType: string }> {
+    try {
+      const formData = new FormData();
+      formData.append('file', imageFile); // 👈 Cambiar a 'file' según documentación de NestJS
+
+      const token = useStore.getState().getAccessToken();
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      // NO agregar Content-Type para FormData - el browser lo maneja automáticamente
+
+      const response = await fetch(API_ENDPOINTS.BOOKS.UPLOAD_IMAGE_ONLY, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      
+      const responseData = await this.handleResponse<any>(response);
+      
+      // Extract the data from the response wrapper
+      const data = responseData.data || responseData;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      throw new Error(error?.message || 'Error al subir la imagen');
+    }
+  }
+
+
 
   static async uploadImage(imageFile: File, folder?: string): Promise<{ url: string; originalName: string; size: number; mimeType: string }> {
     const formData = new FormData();
@@ -203,12 +265,17 @@ export class BookService {
       formData.append('folder', folder);
     }
 
+    const token = useStore.getState().getAccessToken();
+    const headers: HeadersInit = {};
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    // NO agregar Content-Type para FormData - el browser lo maneja automáticamente
+
     const response = await fetch(API_ENDPOINTS.STORAGE.UPLOAD, {
       method: 'POST',
-      headers: {
-        ...this.getAuthHeaders(),
-        // Don't set Content-Type header, let the browser set it with boundary for FormData
-      },
+      headers,
       body: formData,
     });
     

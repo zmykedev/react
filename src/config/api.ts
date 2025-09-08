@@ -6,10 +6,6 @@ const apiBase = (import.meta as any)?.env?.VITE_API_URL ||
     : 'https://cmpc-backend-production-c95a.up.railway.app/api/v1'  // Producción
   );
 
-console.log('=== FRONTEND API CONFIG ===');
-console.log('VITE_API_URL from env:', (import.meta as any)?.env?.VITE_API_URL);
-console.log('Final apiBase:', apiBase);
-console.log('========================');
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -29,9 +25,11 @@ export const API_ENDPOINTS = {
     GET_GENRES: `${apiBase}/books/genres`,
     GET_PUBLISHERS: `${apiBase}/books/publishers`,
     UPLOAD_IMAGE: `${apiBase}/books/upload-image`,
+    UPLOAD_IMAGE_ONLY: `${apiBase}/books/upload-image-only`,
   },
   STORAGE: {
     UPLOAD: `${apiBase}/storage/upload`,
+    UPLOAD_SIMPLE: `${apiBase}/storage/upload-simple`,
     DELETE: `${apiBase}/storage/delete`,
     METADATA: `${apiBase}/storage/metadata`,
   },
