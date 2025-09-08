@@ -90,6 +90,26 @@ class AuditLogService {
 
   private static async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
+      // Handle specific 498 status code by logging out
+      if (response.status === 498) {
+        console.warn('🔒 Status 498 detected in audit service, logging out...', {
+          status: response.status,
+          url: response.url
+        });
+        
+        // We need to import useStore here
+        const { default: useStore } = await import('../store');
+        const { logout } = useStore.getState();
+        logout();
+        
+        // Redirect to login page
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        
+        throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+      }
+      
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }

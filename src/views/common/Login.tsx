@@ -80,7 +80,7 @@ const Login: React.FC = () => {
         
         setSession(session);
         
-        navigate('/books');
+        navigate('/dashboard');
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Error al iniciar sesión');

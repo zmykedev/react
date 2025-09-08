@@ -1,8 +1,9 @@
 import React from 'react';
 import type { Book } from '../types/book';
 import { motion } from 'framer-motion';
-import { Tag, Typography, Space, Button } from 'antd';
+import { Tag, Typography, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined, BookOutlined } from '@ant-design/icons';
+import { useImageWithFallback } from '../hooks/useImageWithFallback';
 
 interface BookCardProps {
   book: Book;
@@ -17,6 +18,12 @@ export const BookCard: React.FC<BookCardProps> = ({
   onDelete,
   onView
 }) => {
+  const { imageSrc, imageError, imageLoading } = useImageWithFallback({
+    src: book.imageUrl,
+    retryAttempts: 3,
+    retryDelay: 1000,
+  });
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -53,35 +60,34 @@ export const BookCard: React.FC<BookCardProps> = ({
           {/* Decorative geometric shapes */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-fountain-blue-300/20 to-transparent dark:from-fountain-blue-500/20 rounded-full -translate-y-16 translate-x-16" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-fountain-blue-400/15 to-transparent dark:from-fountain-blue-600/15 rounded-full translate-y-12 -translate-x-12" />
-          
-          {book.imageUrl ? (
+          {imageSrc && !imageError ? (
             <motion.img
+              key={imageSrc} // Force re-render when URL changes
               alt={`Portada del libro: ${book.title}`}
-              src={book.imageUrl}
+              src={imageSrc}
               className="w-full h-full object-contain relative z-10"
               loading="lazy"
               decoding="async"
               fetchPriority="low"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.nextElementSibling?.classList.remove('hidden');
-              }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             />
-          ) : null}
-          
-          {/* Fallback icon - hidden by default, shown when image fails */}
-          <div className="flex items-center justify-center h-full relative z-10 hidden">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0.7 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <BookOutlined className="w-20 h-20 text-fountain-blue-400 dark:text-fountain-blue-500" />
-            </motion.div>
-          </div>
+          ) : (
+            // Show placeholder when no image URL, loading, or error
+            <div className="image-fallback flex items-center justify-center h-full relative z-10">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                {imageLoading ? (
+                  <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-fountain-blue-400 dark:border-fountain-blue-500"></div>
+                ) : (
+                  <BookOutlined className="w-20 h-20 text-fountain-blue-400 dark:text-fountain-blue-500" />
+                )}
+              </motion.div>
+            </div>
+          )}
           
           {/* Modern availability tag */}
           <motion.div
