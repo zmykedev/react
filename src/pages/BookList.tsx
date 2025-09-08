@@ -6,10 +6,12 @@ import { BookFilters as BookFiltersComponent } from '../components/BookFilters';
 import { BookSorting } from '../components/BookSorting';
 import { BookPagination } from '../components/BookPagination';
 import { BookCard } from '../components/BookCard';
-import { BookForm } from '../components/BookForm';
+import { CreateBookForm } from '../components/CreateBookForm';
+import { EditBookForm } from '../components/EditBookForm';
+import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import useStore from '../store';
 import { Layout, Row, Col, Space, Alert, Empty, Button, Typography, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 
 const BookList: React.FC = () => {
   // Estado principal
@@ -41,6 +43,14 @@ const BookList: React.FC = () => {
   // Estado de vista detallada
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showBookDetail, setShowBookDetail] = useState(false);
+  
+  // Estado de exportación CSV
+  const [exportLoading, setExportLoading] = useState(false);
+  
+  // Estado del modal de eliminación
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Ref para evitar llamadas duplicadas
   const loadingRef = useRef(false);
@@ -188,7 +198,7 @@ const BookList: React.FC = () => {
       setFormLoading(true);
       
       const createdBook = await BookService.createBook(bookData);
-      message.success('Libro creado exitosamente');
+      message.success('📚 Libro creado exitosamente');
       
       // Force refresh if book has image to ensure it displays correctly
       if (createdBook.imageUrl) {
@@ -212,6 +222,7 @@ const BookList: React.FC = () => {
     try {
       setFormLoading(true);
       await BookService.updateBook(editingBook.id, bookData);
+      message.success('📝 Libro actualizado exitosamente');
       
       // Reload books and close form
       await loadBooks();
@@ -226,22 +237,53 @@ const BookList: React.FC = () => {
   }, [editingBook, loadBooks]);
 
   const handleDeleteBook = useCallback(async (bookId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este libro?')) {
-      return;
+    const book = books.find(b => b.id === bookId);
+    if (book) {
+      setBookToDelete(book);
+      setShowDeleteModal(true);
     }
+  }, [books]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!bookToDelete) return;
 
     try {
-      await BookService.deleteBook(bookId);
+      setDeleteLoading(true);
+      await BookService.deleteBook(bookToDelete.id);
+      message.success('📚 Libro eliminado exitosamente');
       await loadBooks();
+      setShowDeleteModal(false);
+      setBookToDelete(null);
     } catch (err) {
       setError('Error al eliminar el libro');
+      message.error('❌ Error al eliminar el libro');
       console.error('Error deleting book:', err);
+    } finally {
+      setDeleteLoading(false);
     }
-  }, [loadBooks]);
+  }, [bookToDelete, loadBooks]);
+
+  const handleCancelDelete = useCallback(() => {
+    setShowDeleteModal(false);
+    setBookToDelete(null);
+  }, []);
 
   const handleEditBook = useCallback((book: Book) => {
     setEditingBook(book);
     setShowForm(true);
+  }, []);
+
+  const handleExportBooks = useCallback(async () => {
+    try {
+      setExportLoading(true);
+      await BookService.exportBooksToCSV();
+      message.success('📥 Exportación de libros completada exitosamente');
+    } catch (error) {
+      message.error('❌ Error al exportar libros a CSV');
+      console.error('Error exporting books:', error);
+    } finally {
+      setExportLoading(false);
+    }
   }, []);
 
   const handleViewBook = useCallback((book: Book) => {
@@ -254,11 +296,11 @@ const BookList: React.FC = () => {
     setEditingBook(null);
   }, []);
 
-  const handleFormSubmit = useCallback(async (bookData: any, imageFile?: File) => {
+  const handleFormSubmit = useCallback(async (bookData: any) => {
     if (editingBook) {
       await handleUpdateBook(bookData);
     } else {
-      await handleCreateBook(bookData, imageFile);
+      await handleCreateBook(bookData);
     }
   }, [editingBook, handleUpdateBook, handleCreateBook]);
 
@@ -302,15 +344,30 @@ const BookList: React.FC = () => {
           </Col>
           
           <Col>
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlusOutlined />}
-              onClick={() => setShowForm(true)}
-              className="btn-primary px-6 py-3 flex items-center gap-2"
-            >
-              Agregar Libro
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                size="large"
+                icon={<PlusOutlined />}
+                onClick={() => setShowForm(true)}
+                className="btn-primary px-6 py-3 flex items-center gap-2"
+              >
+                Agregar Libro
+              </Button>
+              
+              <Button
+                type="default"
+                size="large"
+                icon={<DownloadOutlined />}
+                onClick={handleExportBooks}
+                loading={exportLoading}
+                disabled={books.length === 0}
+                className="px-6 py-3 flex items-center gap-2"
+                title={books.length === 0 ? 'No hay libros para exportar' : 'Exportar todos los libros a CSV'}
+              >
+                {exportLoading ? 'Exportando...' : 'Exportar CSV'}
+              </Button>
+            </Space>
           </Col>
         </Row>
 
@@ -417,14 +474,24 @@ const BookList: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-6xl mx-auto my-4"
             >
-              <BookForm
-                book={editingBook || undefined}
-                onSubmit={handleFormSubmit}
-                onCancel={handleFormCancel}
-                isLoading={formLoading}
-                genres={genres}
-                publishers={publishers}
-              />
+              {editingBook ? (
+                <EditBookForm
+                  book={editingBook}
+                  onSubmit={handleFormSubmit}
+                  onCancel={handleFormCancel}
+                  isLoading={formLoading}
+                  genres={genres}
+                  publishers={publishers}
+                />
+              ) : (
+                <CreateBookForm
+                  onSubmit={handleFormSubmit}
+                  onCancel={handleFormCancel}
+                  isLoading={formLoading}
+                  genres={genres}
+                  publishers={publishers}
+                />
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -568,6 +635,15 @@ const BookList: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Modal de confirmación de eliminación */}
+      <DeleteConfirmModal
+        visible={showDeleteModal}
+        book={bookToDelete}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        loading={deleteLoading}
+      />
     </Layout>
   );
 };
