@@ -24,7 +24,6 @@ export const API_ENDPOINTS = {
     DELETE: `${apiBase}/books`,
     GET_GENRES: `${apiBase}/books/genres`,
     GET_PUBLISHERS: `${apiBase}/books/publishers`,
-    UPLOAD_IMAGE: `${apiBase}/books/upload-image`,
     UPLOAD_IMAGE_ONLY: `${apiBase}/books/upload-image-only`,
   },
   STORAGE: {
