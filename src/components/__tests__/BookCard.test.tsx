@@ -5,8 +5,8 @@ import { BookCard } from '../BookCard';
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>
-  }
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  },
 }));
 
 describe('BookCard', () => {
@@ -21,14 +21,14 @@ describe('BookCard', () => {
     description: 'Test description',
     imageUrl: 'test-image.jpg',
     createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z'
+    updatedAt: '2023-01-01T00:00:00Z',
   };
 
   const defaultProps = {
     book: mockBook,
     onEdit: vi.fn(),
     onDelete: vi.fn(),
-    onView: vi.fn()
+    onView: vi.fn(),
   };
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('BookCard', () => {
 
   it('renders book card component', () => {
     render(<BookCard {...defaultProps} />);
-    
+
     // Just check that the component renders without crashing
     expect(screen.getByText('Test Book')).toBeInTheDocument();
   });
@@ -45,13 +45,13 @@ describe('BookCard', () => {
   it('renders with different book data', () => {
     const differentBook = { ...mockBook, title: 'Different Book' };
     render(<BookCard {...defaultProps} book={differentBook} />);
-    
+
     expect(screen.getByText('Different Book')).toBeInTheDocument();
   });
 
   it('renders with all required props', () => {
     render(<BookCard {...defaultProps} />);
-    
+
     // Check that the component renders with all props
     expect(screen.getByText('Test Book')).toBeInTheDocument();
   });

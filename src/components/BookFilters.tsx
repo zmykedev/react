@@ -16,11 +16,11 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
   filters,
   onFiltersChange,
   genres,
-  publishers
+  publishers,
 }) => {
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [authorTerm, setAuthorTerm] = useState(filters.author || '');
-  
+
   // Usar useDebounceValue para ambos términos de búsqueda
   const [debouncedSearchTerm] = useDebounceValue(searchTerm, 500);
   const [debouncedAuthorTerm] = useDebounceValue(authorTerm, 500);
@@ -29,27 +29,29 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
   useEffect(() => {
     onFiltersChange({
       ...filters,
-      search: debouncedSearchTerm || undefined
+      search: debouncedSearchTerm || undefined,
     });
   }, [debouncedSearchTerm, filters, onFiltersChange]);
 
   // Update filters when debounced author term changes
   useEffect(() => {
-    
     const updatedFilters = {
       ...filters,
-      author: debouncedAuthorTerm || undefined
+      author: debouncedAuthorTerm || undefined,
     };
-    
+
     onFiltersChange(updatedFilters);
   }, [debouncedAuthorTerm, filters, onFiltersChange]);
 
-  const handleFilterChange = useCallback((key: keyof BookFiltersType, value: string | boolean | undefined) => {
-    onFiltersChange({
-      ...filters,
-      [key]: value === '' ? undefined : value
-    });
-  }, [filters, onFiltersChange]);
+  const handleFilterChange = useCallback(
+    (key: keyof BookFiltersType, value: string | boolean | undefined) => {
+      onFiltersChange({
+        ...filters,
+        [key]: value === '' ? undefined : value,
+      });
+    },
+    [filters, onFiltersChange],
+  );
 
   const clearFilters = useCallback(() => {
     setSearchTerm('');
@@ -58,65 +60,57 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
   }, [onFiltersChange]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full"
-    >
-      <Card className="card-primary p-6">
-        <Row justify="space-between" align="middle" className="mb-6 flex-col lg:flex-row gap-4">
+    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className='w-full'>
+      <Card className='card-primary p-6'>
+        <Row justify='space-between' align='middle' className='mb-6 flex-col lg:flex-row gap-4'>
           <Col>
-            <Typography.Title level={3} className="text-lg font-semibold text-primary mb-0">
+            <Typography.Title level={3} className='text-lg font-semibold text-primary mb-0'>
               Filtros Avanzados
             </Typography.Title>
           </Col>
           <Col>
             <Button
-              type="link"
+              type='link'
               onClick={clearFilters}
               icon={<CloseCircleOutlined />}
-              className="text-fountain-blue-600 hover:text-fountain-blue-700 transition-colors dark:text-fountain-blue-400 dark:hover:text-fountain-blue-300"
+              className='text-fountain-blue-600 hover:text-fountain-blue-700 transition-colors dark:text-fountain-blue-400 dark:hover:text-fountain-blue-300'
             >
               Limpiar filtros
             </Button>
           </Col>
         </Row>
 
-        <Form layout="vertical" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <Form layout='vertical' className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4'>
           {/* Búsqueda general en tiempo real */}
-          <Form.Item
-            label="Búsqueda General"
-            tooltip="Buscar por título del libro"
-          >
+          <Form.Item label='Búsqueda General' tooltip='Buscar por título del libro'>
             <Input
-              placeholder="Buscar por título..."
+              placeholder='Buscar por título...'
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </Form.Item>
 
           {/* Filtro por autor con debounce */}
-          <Form.Item
-            label="Autor"
-            tooltip="Filtro independiente por autor"
-          >
+          <Form.Item label='Autor' tooltip='Filtro independiente por autor'>
             <Input
-              placeholder="Filtrar por autor"
+              placeholder='Filtrar por autor'
               value={authorTerm}
               onChange={(e) => setAuthorTerm(e.target.value)}
             />
           </Form.Item>
 
           {/* Filtro por género */}
-          <Form.Item label="Género">
+          <Form.Item label='Género'>
             <Select
-              placeholder="Todos los géneros"
+              placeholder='Todos los géneros'
               value={filters.genre || undefined}
               onChange={(value) => handleFilterChange('genre', value)}
             >
-              <Select.Option value="">Todos los géneros</Select.Option>
+              <Select.Option value=''>Todos los géneros</Select.Option>
               {!Array.isArray(genres) || genres.length === 0 ? (
-                <Select.Option value="" disabled>Cargando géneros...</Select.Option>
+                <Select.Option value='' disabled>
+                  Cargando géneros...
+                </Select.Option>
               ) : (
                 genres.map((genre) => (
                   <Select.Option key={genre} value={genre}>
@@ -128,15 +122,17 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
           </Form.Item>
 
           {/* Filtro por editorial */}
-          <Form.Item label="Editorial">
+          <Form.Item label='Editorial'>
             <Select
-              placeholder="Todas las editoriales"
+              placeholder='Todas las editoriales'
               value={filters.publisher || undefined}
               onChange={(value) => handleFilterChange('publisher', value)}
             >
-              <Select.Option value="">Todas las editoriales</Select.Option>
+              <Select.Option value=''>Todas las editoriales</Select.Option>
               {!Array.isArray(publishers) || publishers.length === 0 ? (
-                <Select.Option value="" disabled>Cargando editoriales...</Select.Option>
+                <Select.Option value='' disabled>
+                  Cargando editoriales...
+                </Select.Option>
               ) : (
                 publishers.map((publisher) => (
                   <Select.Option key={publisher} value={publisher}>
@@ -148,15 +144,17 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
           </Form.Item>
 
           {/* Filtro por disponibilidad */}
-          <Form.Item label="Disponibilidad">
+          <Form.Item label='Disponibilidad'>
             <Select
-              placeholder="Todas"
+              placeholder='Todas'
               value={filters.availability === undefined ? '' : filters.availability.toString()}
-              onChange={(value) => handleFilterChange('availability', value === '' ? undefined : value === 'true')}
+              onChange={(value) =>
+                handleFilterChange('availability', value === '' ? undefined : value === 'true')
+              }
             >
-              <Select.Option value="">Todas</Select.Option>
-              <Select.Option value="true">Disponible</Select.Option>
-              <Select.Option value="false">No disponible</Select.Option>
+              <Select.Option value=''>Todas</Select.Option>
+              <Select.Option value='true'>Disponible</Select.Option>
+              <Select.Option value='false'>No disponible</Select.Option>
             </Select>
           </Form.Item>
         </Form>

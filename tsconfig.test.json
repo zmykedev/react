@@ -5,10 +5,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.test.*",
-    "src/**/*.spec.*",
-    "src/test/**/*"
-  ]
+  "include": ["src/**/*", "src/**/*.test.*", "src/**/*.spec.*", "src/test/**/*"]
 }

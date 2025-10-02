@@ -38,13 +38,13 @@ export const useImageWithFallback = ({
     try {
       setImageLoading(true);
       setImageError(false);
-      
+
       await loadImage(url);
       setImageSrc(url);
       setAttempts(0);
     } catch (error) {
       console.warn(`Failed to load image (attempt ${attempt + 1}):`, url, error);
-      
+
       if (attempt < retryAttempts) {
         setTimeout(() => {
           setAttempts(attempt + 1);

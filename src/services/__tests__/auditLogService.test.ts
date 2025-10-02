@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock the entire auditLogService module
 vi.mock('../auditLogService', () => ({
   auditLogService: {
-    getAuditLogs: vi.fn().mockResolvedValue({ data: [] })
-  }
+    getAuditLogs: vi.fn().mockResolvedValue({ data: [] }),
+  },
 }));
 
 import { auditLogService } from '../auditLogService';

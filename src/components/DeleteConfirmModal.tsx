@@ -16,7 +16,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   book,
   onConfirm,
   onCancel,
-  loading = false
+  loading = false,
 }) => {
   if (!book) return null;
 
@@ -28,37 +28,28 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       centered
       width={400}
       title={
-        <div className="flex items-center gap-3">
-          <ExclamationCircleOutlined className="text-red-500 text-xl" />
+        <div className='flex items-center gap-3'>
+          <ExclamationCircleOutlined className='text-red-500 text-xl' />
           <span>Confirmar eliminación</span>
         </div>
       }
     >
-      <div className="py-4">
-        <Typography.Text className="text-base">
-          ¿Estás seguro de que deseas eliminar el libro{' '}
-          <strong>"{book.title}"</strong>?
+      <div className='py-4'>
+        <Typography.Text className='text-base'>
+          ¿Estás seguro de que deseas eliminar el libro <strong>"{book.title}"</strong>?
         </Typography.Text>
-        
-        <Typography.Text type="secondary" className="block mt-2 text-sm">
+
+        <Typography.Text type='secondary' className='block mt-2 text-sm'>
           Esta acción no se puede deshacer.
         </Typography.Text>
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
-        <Button
-          onClick={onCancel}
-          disabled={loading}
-        >
+      <div className='flex justify-end gap-3 mt-6'>
+        <Button onClick={onCancel} disabled={loading}>
           Cancelar
         </Button>
-        
-        <Button
-          type="primary"
-          danger
-          onClick={onConfirm}
-          loading={loading}
-        >
+
+        <Button type='primary' danger onClick={onConfirm} loading={loading}>
           {loading ? 'Eliminando...' : 'Eliminar'}
         </Button>
       </div>

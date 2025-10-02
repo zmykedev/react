@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { BookService } from '../bookService'
-import type { BookFormData } from '../../types/book'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { BookService } from '../bookService';
+import type { BookFormData } from '../../types/book';
 
 // Mock fetch
-global.fetch = vi.fn()
+global.fetch = vi.fn();
 
 // Mock useStore
 const mockUseStore = {
@@ -11,19 +11,19 @@ const mockUseStore = {
   setAccessToken: vi.fn(),
   setRefreshToken: vi.fn(),
   clearTokens: vi.fn(),
-}
+};
 
 vi.mock('../../store/authStore', () => ({
   useStore: {
     getState: () => mockUseStore,
   },
-}))
+}));
 
 describe('BookService', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseStore.getAccessToken.mockReturnValue('mock-token')
-  })
+    vi.clearAllMocks();
+    mockUseStore.getAccessToken.mockReturnValue('mock-token');
+  });
 
   describe('getBooks', () => {
     it('should fetch books with default parameters', async () => {
@@ -45,14 +45,14 @@ describe('BookService', () => {
         page: 1,
         limit: 10,
         totalPages: 1,
-      }
+      };
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockResponse }),
-      })
+      });
 
-      const result = await BookService.getBooks()
+      const result = await BookService.getBooks();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/search'),
@@ -60,13 +60,13 @@ describe('BookService', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual(mockResponse)
-    })
+      expect(result).toEqual(mockResponse);
+    });
 
     it('should fetch books with custom parameters', async () => {
       const mockResponse = {
@@ -75,12 +75,12 @@ describe('BookService', () => {
         page: 2,
         limit: 20,
         totalPages: 0,
-      }
+      };
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockResponse }),
-      })
+      });
 
       const params = {
         page: 2,
@@ -88,9 +88,9 @@ describe('BookService', () => {
         search: 'test',
         genre: 'Fiction',
         sort: { field: 'title', direction: 'asc' as const },
-      }
+      };
 
-      await BookService.getBooks(params)
+      await BookService.getBooks(params);
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/search'),
@@ -98,22 +98,22 @@ describe('BookService', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
-    })
+        }),
+      );
+    });
 
     it('should handle API errors', async () => {
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 500,
         json: async () => ({ message: 'Internal Server Error' }),
-      })
+      });
 
-      await expect(BookService.getBooks()).rejects.toThrow('Internal Server Error')
-    })
-  })
+      await expect(BookService.getBooks()).rejects.toThrow('Internal Server Error');
+    });
+  });
 
   describe('getBookById', () => {
     it('should fetch a single book by ID', async () => {
@@ -127,38 +127,38 @@ describe('BookService', () => {
         genre: 'Fiction',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
-      }
+      };
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockBook }),
-      })
+      });
 
-      const result = await BookService.getBookById('1')
+      const result = await BookService.getBookById('1');
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/1'),
         expect.objectContaining({
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual({ data: mockBook })
-    })
+      expect(result).toEqual({ data: mockBook });
+    });
 
     it('should handle 404 errors', async () => {
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 404,
         json: async () => ({ message: 'Book not found' }),
-      })
+      });
 
-      await expect(BookService.getBookById('999')).rejects.toThrow('Book not found')
-    })
-  })
+      await expect(BookService.getBookById('999')).rejects.toThrow('Book not found');
+    });
+  });
 
   describe('createBook', () => {
     it('should create a new book', async () => {
@@ -170,21 +170,21 @@ describe('BookService', () => {
         availability: true,
         genre: 'Non-Fiction',
         description: 'New book description',
-      }
+      };
 
       const mockCreatedBook = {
         id: '2',
         ...bookData,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
-      }
+      };
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockCreatedBook }),
-      })
+      });
 
-      const result = await BookService.createBook(bookData)
+      const result = await BookService.createBook(bookData);
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books'),
@@ -192,15 +192,15 @@ describe('BookService', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
           body: JSON.stringify(bookData),
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual(mockCreatedBook)
-    })
-  })
+      expect(result).toEqual(mockCreatedBook);
+    });
+  });
 
   describe('updateBook', () => {
     it('should update an existing book', async () => {
@@ -212,21 +212,21 @@ describe('BookService', () => {
         availability: false,
         genre: 'Science Fiction',
         description: 'Updated description',
-      }
+      };
 
       const mockUpdatedBook = {
         id: '1',
         ...bookData,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-02T00:00:00.000Z',
-      }
+      };
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockUpdatedBook }),
-      })
+      });
 
-      const result = await BookService.updateBook('1', bookData)
+      const result = await BookService.updateBook('1', bookData);
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/1'),
@@ -234,24 +234,24 @@ describe('BookService', () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
           body: JSON.stringify(bookData),
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual({ data: mockUpdatedBook })
-    })
-  })
+      expect(result).toEqual({ data: mockUpdatedBook });
+    });
+  });
 
   describe('deleteBook', () => {
     it('should delete a book', async () => {
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ message: 'Book deleted successfully' }),
-      })
+      });
 
-      await BookService.deleteBook('1')
+      await BookService.deleteBook('1');
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/1'),
@@ -259,95 +259,95 @@ describe('BookService', () => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
-    })
-  })
+        }),
+      );
+    });
+  });
 
   describe('exportBooksToCSV', () => {
     it('should export books as CSV', async () => {
       // Mock window.URL.createObjectURL and revokeObjectURL
-      const mockCreateObjectURL = vi.fn(() => 'mock-url')
-      const mockRevokeObjectURL = vi.fn()
+      const mockCreateObjectURL = vi.fn(() => 'mock-url');
+      const mockRevokeObjectURL = vi.fn();
       Object.defineProperty(window, 'URL', {
         value: {
           createObjectURL: mockCreateObjectURL,
           revokeObjectURL: mockRevokeObjectURL,
         },
         writable: true,
-      })
+      });
 
-      const mockBlob = new Blob(['csv,data'], { type: 'text/csv' })
-      ;(fetch as any).mockResolvedValueOnce({
+      const mockBlob = new Blob(['csv,data'], { type: 'text/csv' });
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         blob: async () => mockBlob,
-      })
+      });
 
-      await BookService.exportBooksToCSV()
+      await BookService.exportBooksToCSV();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/export/csv'),
         expect.objectContaining({
           method: 'GET',
           headers: {},
-        })
-      )
+        }),
+      );
 
       // The method doesn't return anything, it just downloads the file
-      expect(mockCreateObjectURL).toHaveBeenCalledWith(mockBlob)
-      expect(mockRevokeObjectURL).toHaveBeenCalled()
-    })
-  })
+      expect(mockCreateObjectURL).toHaveBeenCalledWith(mockBlob);
+      expect(mockRevokeObjectURL).toHaveBeenCalled();
+    });
+  });
 
   describe('getGenres', () => {
     it('should fetch available genres', async () => {
-      const mockGenres = ['Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery']
+      const mockGenres = ['Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery'];
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockGenres }),
-      })
+      });
 
-      const result = await BookService.getGenres()
+      const result = await BookService.getGenres();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/genres'),
         expect.objectContaining({
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual(mockGenres)
-    })
-  })
+      expect(result).toEqual(mockGenres);
+    });
+  });
 
   describe('getPublishers', () => {
     it('should fetch available publishers', async () => {
-      const mockPublishers = ['Publisher A', 'Publisher B', 'Publisher C']
+      const mockPublishers = ['Publisher A', 'Publisher B', 'Publisher C'];
 
-      ;(fetch as any).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ data: mockPublishers }),
-      })
+      });
 
-      const result = await BookService.getPublishers()
+      const result = await BookService.getPublishers();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/books/publishers'),
         expect.objectContaining({
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        })
-      )
+        }),
+      );
 
-      expect(result).toEqual(mockPublishers)
-    })
-  })
-})
+      expect(result).toEqual(mockPublishers);
+    });
+  });
+});

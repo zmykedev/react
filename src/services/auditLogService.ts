@@ -82,10 +82,12 @@ class AuditLogService {
 
   private static getAuthHeaders(): HeadersInit {
     const token = useStore.getState().getAccessToken();
-    
-    return token ? {
-      'Authorization': `Bearer ${token}`,
-    } : {};
+
+    return token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {};
   }
 
   private static async handleResponse<T>(response: Response): Promise<T> {
@@ -94,35 +96,35 @@ class AuditLogService {
       if (response.status === 498) {
         console.warn('🔒 Status 498 detected in audit service, logging out...', {
           status: response.status,
-          url: response.url
+          url: response.url,
         });
-        
+
         // We need to import useStore here
         const { default: useStore } = await import('../store');
         const { logout } = useStore.getState();
         logout();
-        
+
         // Redirect to login page
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
-        
+
         throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
       }
-      
+
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
+
     return data;
   }
 
   async getLogs(filters: AuditLogFilters = {}): Promise<ApiResponse<AuditLogResponse>> {
     try {
       const params = new URLSearchParams();
-      
+
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           params.append(key, value.toString());
@@ -144,7 +146,7 @@ class AuditLogService {
   async getInventoryLogs(filters: AuditLogFilters = {}): Promise<ApiResponse<AuditLogResponse>> {
     try {
       const params = new URLSearchParams();
-      
+
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           params.append(key, value.toString());
@@ -156,7 +158,7 @@ class AuditLogService {
         credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
-      
+
       const result = await AuditLogService.handleResponse<ApiResponse<AuditLogResponse>>(response);
       return result;
     } catch (error) {
@@ -194,22 +196,26 @@ class AuditLogService {
     }
   }
 
-  async getActions(): Promise<ApiResponse<{
-    actions: string[];
-    statuses: string[];
-    levels: string[];
-  }>> {
+  async getActions(): Promise<
+    ApiResponse<{
+      actions: string[];
+      statuses: string[];
+      levels: string[];
+    }>
+  > {
     try {
       const response = await fetch(`${this.baseUrl}/actions`, {
         mode: 'cors',
         credentials: 'include',
         headers: AuditLogService.getAuthHeaders(),
       });
-      return await AuditLogService.handleResponse<ApiResponse<{
-        actions: string[];
-        statuses: string[];
-        levels: string[];
-      }>>(response);
+      return await AuditLogService.handleResponse<
+        ApiResponse<{
+          actions: string[];
+          statuses: string[];
+          levels: string[];
+        }>
+      >(response);
     } catch (error) {
       console.error('Error fetching audit log actions:', error);
       throw error;
@@ -219,7 +225,7 @@ class AuditLogService {
   async exportLogs(filters: AuditLogFilters = {}): Promise<void> {
     try {
       const params = new URLSearchParams();
-      
+
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           params.append(key, value.toString());
@@ -237,7 +243,7 @@ class AuditLogService {
       }
 
       const blob = await response.blob();
-      
+
       // Crear y descargar el archivo
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -256,7 +262,7 @@ class AuditLogService {
   async exportInventoryLogs(filters: AuditLogFilters = {}): Promise<void> {
     try {
       const params = new URLSearchParams();
-      
+
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           params.append(key, value.toString());
@@ -274,7 +280,7 @@ class AuditLogService {
       }
 
       const blob = await response.blob();
-      
+
       // Crear y descargar el archivo
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');

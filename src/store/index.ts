@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { jwtDecode } from "jwt-decode";
-import type { StateCreator } from "zustand";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { jwtDecode } from 'jwt-decode';
+import type { StateCreator } from 'zustand';
 
 // Tipos para la sesión
 type SessionTokens = {
@@ -54,14 +54,14 @@ const useStore = create<State & Actions>()(
     ((set, get) => ({
       session: null,
       isLoggedIn: false,
-      
+
       setSession: (session) => {
         set(() => ({
           session,
           isLoggedIn: true,
         }));
       },
-      
+
       updateUser: (userUpdates) => {
         const currentSession = get().session;
         if (currentSession) {
@@ -76,40 +76,35 @@ const useStore = create<State & Actions>()(
           }));
         }
       },
-      
+
       getAccessToken: () => {
         return get().session?.tokens.accessToken || null;
       },
-      
+
       getRefreshToken: () => {
         return get().session?.tokens.refreshToken || null;
       },
-      
+
       getUser: () => {
         return get().session?.user || null;
       },
-      
+
       clear: () => {
         set(() => ({
           session: null,
           isLoggedIn: false,
         }));
       },
-      
+
       logout: () => {
         set(() => ({
           session: null,
           isLoggedIn: false,
         }));
       },
-    })) as StateCreator<
-      State & Actions,
-      [],
-      [["zustand/persist", unknown]],
-      State & Actions
-    >,
+    })) as StateCreator<State & Actions, [], [['zustand/persist', unknown]], State & Actions>,
     {
-              name: "cmpc-session",
+      name: 'cmpc-session',
       partialize: (state) => ({
         session: state.session,
         isLoggedIn: state.isLoggedIn,
@@ -121,7 +116,7 @@ const useStore = create<State & Actions>()(
             // Verificar que el token no haya expirado
             const decoded = jwtDecode(session.tokens.accessToken);
             const currentTime = Date.now() / 1000;
-            
+
             if (decoded.exp && decoded.exp < currentTime) {
               // Token expirado, limpiar sesión
               state?.clear();
@@ -133,8 +128,8 @@ const useStore = create<State & Actions>()(
         }
       },
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useStore;

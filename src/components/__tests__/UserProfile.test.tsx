@@ -9,7 +9,7 @@ vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
   };
 });
 
@@ -22,8 +22,8 @@ vi.mock('../../store', () => ({
   default: () => ({
     getUser: mockGetUser,
     isLoggedIn: mockIsLoggedIn,
-    logout: mockLogout
-  })
+    logout: mockLogout,
+  }),
 }));
 
 const UserProfileWrapper = () => (
@@ -39,7 +39,7 @@ describe('UserProfile', () => {
     firstName: 'John',
     lastName: 'Doe',
     createdAt: '2023-01-01T00:00:00Z',
-    lastLoginAt: '2023-12-01T12:00:00Z'
+    lastLoginAt: '2023-12-01T12:00:00Z',
   };
 
   beforeEach(() => {

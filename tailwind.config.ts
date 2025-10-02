@@ -1,11 +1,8 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  darkMode: 'class', 
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -21,10 +18,9 @@ export default {
           800: '#275963',
           900: '#254a54',
           950: '#133139',
-        }
-      }
+        },
+      },
     },
   },
   plugins: [],
-} satisfies Config
-  
+} satisfies Config;
