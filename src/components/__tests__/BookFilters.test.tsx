@@ -6,13 +6,13 @@ import type { BookFilters as BookFiltersType } from '../../types/book';
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>
-  }
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  },
 }));
 
 // Mock usehooks-ts
 vi.mock('usehooks-ts', () => ({
-  useDebounceValue: vi.fn((value: any) => [value])
+  useDebounceValue: vi.fn((value: any) => [value]),
 }));
 
 describe('BookFilters', () => {
@@ -21,7 +21,7 @@ describe('BookFilters', () => {
     filters: {} as BookFiltersType,
     onFiltersChange: mockOnFiltersChange,
     genres: ['Ficción', 'No Ficción', 'Ciencia'],
-    publishers: ['Editorial A', 'Editorial B', 'Editorial C']
+    publishers: ['Editorial A', 'Editorial B', 'Editorial C'],
   };
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('BookFilters', () => {
 
   it('renders filter controls', () => {
     render(<BookFilters {...defaultProps} />);
-    
+
     expect(screen.getByText('Filtros Avanzados')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Buscar por título...')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Filtrar por autor')).toBeInTheDocument();
@@ -41,13 +41,13 @@ describe('BookFilters', () => {
 
   it('shows clear filters button', () => {
     render(<BookFilters {...defaultProps} />);
-    
+
     expect(screen.getByText('Limpiar filtros')).toBeInTheDocument();
   });
 
   it('renders with empty genres and publishers', () => {
     render(<BookFilters {...defaultProps} genres={[]} publishers={[]} />);
-    
+
     expect(screen.getByText('Filtros Avanzados')).toBeInTheDocument();
   });
 });

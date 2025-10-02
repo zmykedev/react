@@ -24,7 +24,7 @@
 
     /* Path Resolution */
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     }
   },
   "include": ["src"]

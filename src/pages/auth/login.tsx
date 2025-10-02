@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Layout, 
-  Form, 
-  Input, 
-  Button, 
-  Typography, 
-  Card, 
-  Space, 
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  Typography,
+  Card,
+  Space,
   Alert,
   Divider,
   Checkbox,
-  Avatar
+  Avatar,
 } from 'antd';
 import {
   UserOutlined,
   LockOutlined,
   LoginOutlined,
   UserAddOutlined,
-  BookOutlined
+  BookOutlined,
 } from '@ant-design/icons';
 import { API_ENDPOINTS } from '@/config/api.ts';
 import useStore from '../../store';
@@ -37,7 +37,7 @@ const Login = () => {
   const location = useLocation();
   const { setSession } = useStore();
   const [form] = Form.useForm();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,14 +57,14 @@ const Login = () => {
 
     try {
       const encryptedPassword = encryptPassword(values.password);
-      
+
       const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           email: values.email,
@@ -74,12 +74,12 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // El ResponseInterceptor envuelve la respuesta en data.data
         const session = data.data?.session || data.session;
-        
+
         setSession(session);
-        
+
         navigate('/dashboard');
       } else {
         const errorData = await response.json();
@@ -93,24 +93,20 @@ const Login = () => {
   };
 
   return (
-    <Layout className="min-h-screen gradient-primary">
-      <Content className="flex items-center justify-center py-8 px-4">
-        <Card 
-          className="w-full max-w-md shadow-2xl border-0 card-primary"
+    <Layout className='min-h-screen gradient-primary'>
+      <Content className='flex items-center justify-center py-8 px-4'>
+        <Card
+          className='w-full max-w-md shadow-2xl border-0 card-primary'
           styles={{ body: { padding: '40px' } }}
         >
           {/* Header */}
-          <div className="text-center mb-8">
-            <Space direction="vertical" size="large" className="w-full">
-              <Avatar 
-                size={64} 
-                style={{ backgroundColor: '#288592' }}
-                icon={<BookOutlined />}
-              />
-              <Title level={2} className="mb-2 text-primary">
+          <div className='text-center mb-8'>
+            <Space direction='vertical' size='large' className='w-full'>
+              <Avatar size={64} style={{ backgroundColor: '#288592' }} icon={<BookOutlined />} />
+              <Title level={2} className='mb-2 text-primary'>
                 Bienvenido de vuelta
               </Title>
-              <Text type="secondary" className="text-secondary">
+              <Text type='secondary' className='text-secondary'>
                 Accede a tu cuenta de CMPC-Inventario
               </Text>
             </Space>
@@ -118,78 +114,66 @@ const Login = () => {
 
           {/* Mensaje de éxito */}
           {location.state?.message && (
-            <Alert
-              message={location.state.message}
-              type="success"
-              showIcon
-              className="mb-6"
-            />
+            <Alert message={location.state.message} type='success' showIcon className='mb-6' />
           )}
 
           {/* Formulario */}
           <Form
             form={form}
-            name="login"
+            name='login'
             onFinish={handleSubmit}
-            layout="vertical"
-            size="large"
+            layout='vertical'
+            size='large'
             requiredMark={false}
           >
             <Form.Item
-              name="email"
-              label="Correo electrónico"
+              name='email'
+              label='Correo electrónico'
               rules={[
                 { required: true, message: 'Por favor ingresa tu correo electrónico' },
-                { type: 'email', message: 'Por favor ingresa un correo válido' }
+                { type: 'email', message: 'Por favor ingresa un correo válido' },
               ]}
             >
               <Input
-                prefix={<UserOutlined className="text-fountain-blue-400" />}
-                placeholder="tu@email.com"
-                autoComplete="email"
+                prefix={<UserOutlined className='text-fountain-blue-400' />}
+                placeholder='tu@email.com'
+                autoComplete='email'
               />
             </Form.Item>
 
             <Form.Item
-              name="password"
-              label="Contraseña"
+              name='password'
+              label='Contraseña'
               rules={[
                 { required: true, message: 'Por favor ingresa tu contraseña' },
-                { min: 6, message: 'La contraseña debe tener al menos 6 caracteres' }
+                { min: 6, message: 'La contraseña debe tener al menos 6 caracteres' },
               ]}
             >
               <Password
-                prefix={<LockOutlined className="text-fountain-blue-400" />}
-                placeholder="••••••••"
-                autoComplete="current-password"
+                prefix={<LockOutlined className='text-fountain-blue-400' />}
+                placeholder='••••••••'
+                autoComplete='current-password'
               />
             </Form.Item>
 
             <Form.Item>
-              <div className="flex justify-between items-center">
+              <div className='flex justify-between items-center'>
                 <Checkbox>Recordarme</Checkbox>
-                <Link href="/forgot-password">¿Olvidaste tu contraseña?</Link>
+                <Link href='/forgot-password'>¿Olvidaste tu contraseña?</Link>
               </div>
             </Form.Item>
 
             {/* Error */}
-            {error && (
-              <Alert
-                message={error}
-                type="error"
-                showIcon
-                className="mb-6"
-              />
-            )}
+            {error && <Alert message={error} type='error' showIcon className='mb-6' />}
 
-            <Form.Item className="mb-4">
+            <Form.Item className='mb-4'>
               <Button
-                type="primary"
-                htmlType="submit"
+                type='primary'
+                htmlType='submit'
                 loading={isLoading}
                 icon={<LoginOutlined />}
-                size="large"
-                className="w-full h-12 text-base font-medium"
+                size='large'
+                className='w-full h-12 text-base font-medium'
                 style={{ backgroundColor: '#288592', borderColor: '#288592' }}
               >
                 {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
@@ -200,17 +184,17 @@ const Login = () => {
           <Divider>o</Divider>
 
           {/* Registro */}
-          <div className="text-center">
-            <Space direction="vertical" size="small">
-              <Text type="secondary" className="text-fountain-blue-700">
+          <div className='text-center'>
+            <Space direction='vertical' size='small'>
+              <Text type='secondary' className='text-fountain-blue-700'>
                 ¿No tienes una cuenta?
               </Text>
               <Button
-                type="link"
+                type='link'
                 icon={<UserAddOutlined />}
                 onClick={() => navigate('/register')}
-                className="text-fountain-blue-600 hover:text-fountain-blue-800 font-medium"
-                size="large"
+                className='text-fountain-blue-600 hover:text-fountain-blue-800 font-medium'
+                size='large'
               >
                 Crear cuenta
               </Button>
@@ -223,4 +207,3 @@ const Login = () => {
 };
 
 export default Login;
-

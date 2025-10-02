@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Layout, 
-  Form, 
-  Input, 
-  Button, 
-  Typography, 
-  Card, 
-  Space, 
+import { useNavigate } from 'react-router';
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  Typography,
+  Card,
+  Space,
   Divider,
   Row,
   Col,
@@ -21,12 +21,12 @@ import {
   UserAddOutlined,
   BookOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import { API_ENDPOINTS } from '../../config/api.ts';
 
 const { Content } = Layout;
-const { Title, Text} = Typography;
+const { Title, Text } = Typography;
 const { Password } = Input;
 
 interface FormData {
@@ -37,22 +37,22 @@ interface FormData {
 }
 
 const PASSWORD_RULES = [
-  { test: (p: string) => /[A-Z]/.test(p), text: "Una letra mayúscula" },
-  { test: (p: string) => /[a-z]/.test(p), text: "Una letra minúscula" },
-  { test: (p: string) => /[0-9]/.test(p), text: "Un número" },
-  { test: (p: string) => /[@$!%*?&]/.test(p), text: "Un carácter especial" }
+  { test: (p: string) => /[A-Z]/.test(p), text: 'Una letra mayúscula' },
+  { test: (p: string) => /[a-z]/.test(p), text: 'Una letra minúscula' },
+  { test: (p: string) => /[0-9]/.test(p), text: 'Un número' },
+  { test: (p: string) => /[@$!%*?&]/.test(p), text: 'Un carácter especial' },
 ];
 
 const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [passwordValidation, setPasswordValidation] = useState({
     isValid: false,
     strength: 0,
-    requirements: PASSWORD_RULES.map(rule => ({ ...rule, met: false }))
+    requirements: PASSWORD_RULES.map((rule) => ({ ...rule, met: false })),
   });
 
   // Función simple para encriptar la contraseña
@@ -66,15 +66,15 @@ const Register = () => {
   };
 
   const validatePassword = (password: string) => {
-    const requirements = PASSWORD_RULES.map(rule => ({
+    const requirements = PASSWORD_RULES.map((rule) => ({
       ...rule,
-      met: rule.test(password)
+      met: rule.test(password),
     }));
-    
-    const metCount = requirements.filter(req => req.met).length;
+
+    const metCount = requirements.filter((req) => req.met).length;
     const strength = Math.round((metCount / requirements.length) * 100);
     const isValid = metCount === requirements.length;
-    
+
     setPasswordValidation({ isValid, strength, requirements });
     return isValid;
   };
@@ -101,14 +101,14 @@ const Register = () => {
 
     try {
       const encryptedPassword = encryptPassword(values.password);
-      
+
       const response = await fetch(API_ENDPOINTS.AUTH.REGISTER, {
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           firstName: values.firstName,
@@ -119,8 +119,8 @@ const Register = () => {
       });
 
       if (response.ok) {
-        navigate('/login', { 
-          state: { message: 'Cuenta creada exitosamente. Por favor inicia sesión.' } 
+        navigate('/login', {
+          state: { message: 'Cuenta creada exitosamente. Por favor inicia sesión.' },
         });
       } else {
         const errorData = await response.json();
@@ -142,23 +142,17 @@ const Register = () => {
   };
 
   return (
-    <Layout className="bg-gradient-to-br from-fountain-blue-50 to-fountain-blue-100">
-      <Content className="flex items-stretch justify-center min-h-screen py-4 px-4">
-        <Card 
-          className="shadow-2xl border-0 flex-grow-0 max-w-md w-full h-full"
-        >
+    <Layout className='bg-gradient-to-br from-fountain-blue-50 to-fountain-blue-100'>
+      <Content className='flex items-stretch justify-center min-h-screen py-4 px-4'>
+        <Card className='shadow-2xl border-0 flex-grow-0 max-w-md w-full h-full'>
           {/* Header */}
-          <div className="text-center mb-8">
-            <Space direction="vertical" size="large" className="w-full">
-              <Avatar 
-                size={64} 
-                style={{ backgroundColor: '#288592' }}
-                icon={<BookOutlined />}
-              />
-              <Title level={2} className="mb-2 text-fountain-blue-900">
+          <div className='text-center mb-8'>
+            <Space direction='vertical' size='large' className='w-full'>
+              <Avatar size={64} style={{ backgroundColor: '#288592' }} icon={<BookOutlined />} />
+              <Title level={2} className='mb-2 text-fountain-blue-900'>
                 Crear cuenta
               </Title>
-              <Text type="secondary" className="text-fountain-blue-700">
+              <Text type='secondary' className='text-fountain-blue-700'>
                 Únete a CMPC-Inventario para gestionar tu biblioteca
               </Text>
             </Space>
@@ -167,47 +161,47 @@ const Register = () => {
           {/* Formulario */}
           <Form
             form={form}
-            name="register"
+            name='register'
             onFinish={handleSubmit}
-            layout="vertical"
-            size="large"
+            layout='vertical'
+            size='large'
             requiredMark={false}
           >
             {/* Nombre y Apellido */}
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="firstName"
-                  label="Nombre"
+                  name='firstName'
+                  label='Nombre'
                   rules={[
                     { required: true, message: 'Por favor ingresa tu nombre' },
-                    { min: 2, message: 'El nombre debe tener al menos 2 caracteres' }
+                    { min: 2, message: 'El nombre debe tener al menos 2 caracteres' },
                   ]}
                   validateStatus={isFieldValid('firstName') ? 'success' : undefined}
                   help={errors.firstName}
                 >
                   <Input
-                    prefix={<UserOutlined className="text-fountain-blue-400" />}
-                    placeholder="Tu nombre"
-                    autoComplete="given-name"
+                    prefix={<UserOutlined className='text-fountain-blue-400' />}
+                    placeholder='Tu nombre'
+                    autoComplete='given-name'
                   />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="lastName"
-                  label="Apellido"
+                  name='lastName'
+                  label='Apellido'
                   rules={[
                     { required: true, message: 'Por favor ingresa tu apellido' },
-                    { min: 2, message: 'El apellido debe tener al menos 2 caracteres' }
+                    { min: 2, message: 'El apellido debe tener al menos 2 caracteres' },
                   ]}
                   validateStatus={isFieldValid('lastName') ? 'success' : undefined}
                   help={errors.lastName}
                 >
                   <Input
-                    prefix={<UserOutlined className="text-fountain-blue-400" />}
-                    placeholder="Tu apellido"
-                    autoComplete="family-name"
+                    prefix={<UserOutlined className='text-fountain-blue-400' />}
+                    placeholder='Tu apellido'
+                    autoComplete='family-name'
                   />
                 </Form.Item>
               </Col>
@@ -215,69 +209,66 @@ const Register = () => {
 
             {/* Email */}
             <Form.Item
-              name="email"
-              label="Correo electrónico"
+              name='email'
+              label='Correo electrónico'
               rules={[
                 { required: true, message: 'Por favor ingresa tu correo electrónico' },
-                { type: 'email', message: 'Por favor ingresa un correo válido' }
+                { type: 'email', message: 'Por favor ingresa un correo válido' },
               ]}
               validateStatus={isFieldValid('email') ? 'success' : undefined}
               help={errors.email}
             >
               <Input
-                prefix={<MailOutlined className="text-fountain-blue-400" />}
-                placeholder="tu@email.com"
-                autoComplete="email"
+                prefix={<MailOutlined className='text-fountain-blue-400' />}
+                placeholder='tu@email.com'
+                autoComplete='email'
               />
             </Form.Item>
 
             {/* Contraseña */}
             <Form.Item
-              name="password"
-              label="Contraseña"
+              name='password'
+              label='Contraseña'
               rules={[
                 { required: true, message: 'Por favor ingresa una contraseña' },
-                { min: 8, message: 'La contraseña debe tener al menos 8 caracteres' }
+                { min: 8, message: 'La contraseña debe tener al menos 8 caracteres' },
               ]}
               help={errors.password}
             >
               <Password
-                prefix={<LockOutlined className="text-fountain-blue-400" />}
-                placeholder="••••••••"
-                autoComplete="new-password"
+                prefix={<LockOutlined className='text-fountain-blue-400' />}
+                placeholder='••••••••'
+                autoComplete='new-password'
                 onChange={handlePasswordChange}
               />
             </Form.Item>
 
             {/* Validación de contraseña */}
             {form.getFieldValue('password') && (
-              <div className="mb-6">
+              <div className='mb-6'>
                 {/* Barra de fortaleza */}
-                <div className="mb-3">
-                  <Text type="secondary" className="text-sm text-fountain-blue-700">
+                <div className='mb-3'>
+                  <Text type='secondary' className='text-sm text-fountain-blue-700'>
                     Fortaleza de la contraseña:
                   </Text>
                   <Progress
                     percent={passwordValidation.strength}
                     strokeColor={getStrengthColor(passwordValidation.strength)}
-                    size="small"
-                    className="mt-1"
+                    size='small'
+                    className='mt-1'
                   />
                 </div>
 
                 {/* Requisitos */}
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   {passwordValidation.requirements.map((req, index) => (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className='flex items-center space-x-2'>
                       {req.met ? (
-                        <CheckCircleOutlined className="text-green-500" />
+                        <CheckCircleOutlined className='text-green-500' />
                       ) : (
-                        <CloseCircleOutlined className="text-fountain-blue-400" />
+                        <CloseCircleOutlined className='text-fountain-blue-400' />
                       )}
-                      <Text 
-                        type={req.met ? 'success' : 'secondary'}
-                        className="text-sm"
-                      >
+                      <Text type={req.met ? 'success' : 'secondary'} className='text-sm'>
                         {req.text}
                       </Text>
                     </div>
@@ -287,14 +278,14 @@ const Register = () => {
             )}
 
             {/* Botón de envío */}
-            <Form.Item className="mb-6">
+            <Form.Item className='mb-6'>
               <Button
-                type="primary"
-                htmlType="submit"
+                type='primary'
+                htmlType='submit'
                 loading={isLoading}
                 icon={<UserAddOutlined />}
-                size="large"
-                className="w-full h-12 text-base font-medium"
+                size='large'
+                className='w-full h-12 text-base font-medium'
                 disabled={!passwordValidation.isValid}
                 style={{ backgroundColor: '#288592', borderColor: '#288592' }}
               >
@@ -306,17 +297,17 @@ const Register = () => {
           <Divider>o</Divider>
 
           {/* Login */}
-          <div className="text-center">
-            <Space direction="vertical" size="small">
-              <Text type="secondary" className="text-fountain-blue-700">
+          <div className='text-center'>
+            <Space direction='vertical' size='small'>
+              <Text type='secondary' className='text-fountain-blue-700'>
                 ¿Ya tienes una cuenta?
               </Text>
               <Button
-                type="link"
+                type='link'
                 icon={<UserOutlined />}
                 onClick={() => navigate('/login')}
-                className="text-fountain-blue-600 hover:text-fountain-blue-800 font-medium"
-                size="large"
+                className='text-fountain-blue-600 hover:text-fountain-blue-800 font-medium'
+                size='large'
               >
                 Iniciar sesión
               </Button>

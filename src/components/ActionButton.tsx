@@ -22,10 +22,10 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
     <Button
       type={antDType}
       ghost={isGhost}
-      size="large"
+      size='large'
       {...buttonProps}
       onClick={() => onAction(action, target)}
-      className="shadow-lg"
+      className='shadow-lg'
     >
       {children}
     </Button>

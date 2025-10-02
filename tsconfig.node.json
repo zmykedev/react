@@ -22,7 +22,7 @@
 
     /* Path Resolution */
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     }
   },
   "include": ["vite.config.ts"]

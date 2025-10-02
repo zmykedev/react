@@ -9,7 +9,7 @@ vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
   };
 });
 
@@ -19,8 +19,8 @@ const mockGetUser = vi.fn();
 vi.mock('../../store', () => ({
   default: () => ({
     logout: mockLogout,
-    getUser: mockGetUser
-  })
+    getUser: mockGetUser,
+  }),
 }));
 
 // Mock theme context
@@ -28,8 +28,8 @@ const mockToggleTheme = vi.fn();
 vi.mock('../../contexts/ThemeContext', () => ({
   useTheme: () => ({
     theme: 'light',
-    toggleTheme: mockToggleTheme
-  })
+    toggleTheme: mockToggleTheme,
+  }),
 }));
 
 const NavbarWrapper = ({ userName, userEmail }: { userName?: string; userEmail?: string }) => (
@@ -75,16 +75,16 @@ describe('Navbar', () => {
 
     it('handles navigation clicks for non-logged users', () => {
       render(<NavbarWrapper />);
-      
+
       // Use getAllByText and click the first occurrence (desktop nav)
       const inicioButtons = screen.getAllByText('Inicio');
       fireEvent.click(inicioButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/');
-      
+
       const catalogoButtons = screen.getAllByText('Catálogo');
       fireEvent.click(catalogoButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/books');
-      
+
       const aboutButtons = screen.getAllByText('Acerca de');
       fireEvent.click(aboutButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/about');
@@ -98,11 +98,11 @@ describe('Navbar', () => {
 
     it('handles login and register button clicks', () => {
       render(<NavbarWrapper />);
-      
+
       const registerButtons = screen.getAllByText('Registrarse');
       fireEvent.click(registerButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/register');
-      
+
       const loginButtons = screen.getAllByText('Iniciar Sesión');
       fireEvent.click(loginButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/login');
@@ -113,7 +113,7 @@ describe('Navbar', () => {
     beforeEach(() => {
       mockGetUser.mockReturnValue({
         firstName: 'Test User',
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
 
@@ -125,11 +125,11 @@ describe('Navbar', () => {
 
     it('handles navigation clicks for logged users', () => {
       render(<NavbarWrapper />);
-      
+
       const librosButtons = screen.getAllByText('Libros');
       fireEvent.click(librosButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/books');
-      
+
       const dashboardButtons = screen.getAllByText('Dashboard');
       fireEvent.click(dashboardButtons[0]);
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
@@ -142,53 +142,60 @@ describe('Navbar', () => {
     });
 
     it('displays custom user props when provided', () => {
-      render(<NavbarWrapper userName="Custom User" userEmail="custom@example.com" />);
+      render(<NavbarWrapper userName='Custom User' userEmail='custom@example.com' />);
       expect(screen.getByText('Custom User')).toBeInTheDocument();
       expect(screen.getByText('custom@example.com')).toBeInTheDocument();
     });
 
     it('handles logout functionality', async () => {
       render(<NavbarWrapper />);
-      
+
       // Click on user avatar to open dropdown
       const avatars = screen.getAllByRole('img');
-      const userAvatar = avatars.find(img => img.getAttribute('alt')?.includes('avatar') || img.getAttribute('alt')?.includes('user'));
+      const userAvatar = avatars.find(
+        (img) =>
+          img.getAttribute('alt')?.includes('avatar') || img.getAttribute('alt')?.includes('user'),
+      );
       if (userAvatar) {
         fireEvent.click(userAvatar);
       } else {
         fireEvent.click(avatars[0]);
       }
-      
+
       // Wait for dropdown to appear and click logout
       await waitFor(() => {
-        const logoutButton = screen.getByRole('button', { name: /cerrar sesión/i }) || 
-                           screen.getByText('Cerrar Sesión');
+        const logoutButton =
+          screen.getByRole('button', { name: /cerrar sesión/i }) ||
+          screen.getByText('Cerrar Sesión');
         fireEvent.click(logoutButton);
       });
-      
+
       expect(mockLogout).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/login');
     });
 
     it('handles profile navigation', async () => {
       render(<NavbarWrapper />);
-      
+
       // Click on user avatar to open dropdown
       const avatars = screen.getAllByRole('img');
-      const userAvatar = avatars.find(img => img.getAttribute('alt')?.includes('avatar') || img.getAttribute('alt')?.includes('user'));
+      const userAvatar = avatars.find(
+        (img) =>
+          img.getAttribute('alt')?.includes('avatar') || img.getAttribute('alt')?.includes('user'),
+      );
       if (userAvatar) {
         fireEvent.click(userAvatar);
       } else {
         fireEvent.click(avatars[0]);
       }
-      
+
       // Wait for dropdown to appear and click profile
       await waitFor(() => {
-        const profileButton = screen.getByRole('button', { name: /mi perfil/i }) ||
-                            screen.getByText('Mi Perfil');
+        const profileButton =
+          screen.getByRole('button', { name: /mi perfil/i }) || screen.getByText('Mi Perfil');
         fireEvent.click(profileButton);
       });
-      
+
       expect(mockNavigate).toHaveBeenCalledWith('/profile');
     });
   });
@@ -214,11 +221,12 @@ describe('Navbar', () => {
       } catch {
         // Look for hamburger icon or mobile menu button by test-id or class
         const buttons = screen.getAllByRole('button');
-        menuButton = buttons.find(button => 
-          button.innerHTML.includes('☰') || 
-          button.innerHTML.includes('hamburger') ||
-          button.className.includes('mobile-menu') ||
-          button.getAttribute('data-testid') === 'mobile-menu-button'
+        menuButton = buttons.find(
+          (button) =>
+            button.innerHTML.includes('☰') ||
+            button.innerHTML.includes('hamburger') ||
+            button.className.includes('mobile-menu') ||
+            button.getAttribute('data-testid') === 'mobile-menu-button',
         );
       }
     }
@@ -228,7 +236,7 @@ describe('Navbar', () => {
   it('handles mobile menu interactions for non-logged users', async () => {
     mockGetUser.mockReturnValue(null);
     render(<NavbarWrapper />);
-    
+
     // Find and click mobile menu button
     let menuButton;
     try {
@@ -238,17 +246,18 @@ describe('Navbar', () => {
         menuButton = screen.getByLabelText(/menu/i);
       } catch {
         const buttons = screen.getAllByRole('button');
-        menuButton = buttons.find(button => 
-          button.innerHTML.includes('☰') || 
-          button.innerHTML.includes('hamburger') ||
-          button.className.includes('mobile-menu')
+        menuButton = buttons.find(
+          (button) =>
+            button.innerHTML.includes('☰') ||
+            button.innerHTML.includes('hamburger') ||
+            button.className.includes('mobile-menu'),
         );
       }
     }
-    
+
     if (menuButton) {
       fireEvent.click(menuButton);
-      
+
       // Wait for mobile menu items to appear
       await waitFor(() => {
         // Check that mobile menu items are visible
@@ -257,14 +266,14 @@ describe('Navbar', () => {
         const aboutElements = screen.getAllByText('Acerca de');
         const registerElements = screen.getAllByText('Registrarse');
         const loginElements = screen.getAllByText('Iniciar Sesión');
-        
+
         expect(inicioElements.length).toBeGreaterThan(1);
         expect(catalogoElements.length).toBeGreaterThan(1);
         expect(aboutElements.length).toBeGreaterThan(1);
         expect(registerElements.length).toBeGreaterThan(0);
         expect(loginElements.length).toBeGreaterThan(0);
       });
-      
+
       // Test mobile menu navigation
       const mobileInicio = screen.getAllByText('Inicio');
       fireEvent.click(mobileInicio[mobileInicio.length - 1]); // Click the last one (mobile)
@@ -275,10 +284,10 @@ describe('Navbar', () => {
   it('handles mobile menu interactions for logged users', async () => {
     mockGetUser.mockReturnValue({
       firstName: 'Test User',
-      email: 'test@example.com'
+      email: 'test@example.com',
     });
     render(<NavbarWrapper />);
-    
+
     // Find and click mobile menu button
     let menuButton;
     try {
@@ -288,31 +297,32 @@ describe('Navbar', () => {
         menuButton = screen.getByLabelText(/menu/i);
       } catch {
         const buttons = screen.getAllByRole('button');
-        menuButton = buttons.find(button => 
-          button.innerHTML.includes('☰') || 
-          button.innerHTML.includes('hamburger') ||
-          button.className.includes('mobile-menu')
+        menuButton = buttons.find(
+          (button) =>
+            button.innerHTML.includes('☰') ||
+            button.innerHTML.includes('hamburger') ||
+            button.className.includes('mobile-menu'),
         );
       }
     }
-    
+
     if (menuButton) {
       fireEvent.click(menuButton);
-      
+
       // Wait for mobile menu items to appear
       await waitFor(() => {
         // Check that mobile menu items are visible
         const librosElements = screen.getAllByText('Libros');
         const dashboardElements = screen.getAllByText('Dashboard');
-        
+
         expect(librosElements.length).toBeGreaterThan(1);
         expect(dashboardElements.length).toBeGreaterThan(1);
-        
+
         // These should be in mobile menu only
         expect(screen.getByText('Mi Perfil')).toBeInTheDocument();
         expect(screen.getByText('Cerrar Sesión')).toBeInTheDocument();
       });
-      
+
       // Test mobile menu navigation
       const mobileLibros = screen.getAllByText('Libros');
       fireEvent.click(mobileLibros[mobileLibros.length - 1]); // Click the last one (mobile)
@@ -321,7 +331,7 @@ describe('Navbar', () => {
   });
 
   it('renders with custom user props', () => {
-    render(<NavbarWrapper userName="Custom User" userEmail="custom@example.com" />);
+    render(<NavbarWrapper userName='Custom User' userEmail='custom@example.com' />);
     expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 
@@ -339,30 +349,29 @@ describe('Navbar', () => {
   // Additional helper tests for better coverage
   it('toggles mobile menu visibility', async () => {
     render(<NavbarWrapper />);
-    
+
     let menuButton;
     try {
       menuButton = screen.getByRole('button', { name: /menu/i });
     } catch {
       const buttons = screen.getAllByRole('button');
-      menuButton = buttons.find(button => 
-        button.innerHTML.includes('☰') || 
-        button.className.includes('mobile-menu')
+      menuButton = buttons.find(
+        (button) => button.innerHTML.includes('☰') || button.className.includes('mobile-menu'),
       );
     }
-    
+
     if (menuButton) {
       // Open mobile menu
       fireEvent.click(menuButton);
-      
+
       await waitFor(() => {
         const inicioElements = screen.getAllByText('Inicio');
         expect(inicioElements.length).toBeGreaterThan(1);
       });
-      
+
       // Close mobile menu
       fireEvent.click(menuButton);
-      
+
       // Menu should still be there but items might be hidden
       expect(screen.getByRole('banner')).toBeInTheDocument();
     }
@@ -370,7 +379,7 @@ describe('Navbar', () => {
 
   it('handles keyboard navigation', () => {
     render(<NavbarWrapper />);
-    
+
     // Test that focusable elements within navbar work
     const buttons = screen.getAllByRole('button');
     if (buttons.length > 0) {
@@ -378,7 +387,7 @@ describe('Navbar', () => {
       firstButton.focus();
       expect(document.activeElement).toBe(firstButton);
     }
-    
+
     // Test that links are focusable
     const links = screen.getAllByRole('link');
     if (links.length > 0) {
@@ -386,7 +395,7 @@ describe('Navbar', () => {
       firstLink.focus();
       expect(document.activeElement).toBe(firstLink);
     }
-    
+
     // Just verify navbar exists if no focusable elements found
     expect(screen.getByRole('banner')).toBeInTheDocument();
   });

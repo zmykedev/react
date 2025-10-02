@@ -1,10 +1,13 @@
 # 📚 CMPC-Libros Frontend
 
-Sistema de gestión de inventario de libros con interfaz moderna y responsiva construida con React, TypeScript, Ant Design y Tailwind CSS.
+Sistema de gestión de inventario de libros con interfaz moderna y responsiva construida con React,
+TypeScript, Ant Design y Tailwind CSS.
 
 ## 🎯 Descripción General
 
-CMPC-Libros Frontend es una aplicación web moderna que proporciona una interfaz intuitiva para la gestión completa de inventario de libros. La aplicación incluye funcionalidades avanzadas como búsqueda, filtrado, exportación de datos, sistema de auditoría y gestión de usuarios.
+CMPC-Libros Frontend es una aplicación web moderna que proporciona una interfaz intuitiva para la
+gestión completa de inventario de libros. La aplicación incluye funcionalidades avanzadas como
+búsqueda, filtrado, exportación de datos, sistema de auditoría y gestión de usuarios.
 
 ## ✨ Características Principales
 
@@ -21,21 +24,25 @@ CMPC-Libros Frontend es una aplicación web moderna que proporciona una interfaz
 ## 🛠️ Tecnologías Utilizadas
 
 ### Core
+
 - **React 18.3.1** - Biblioteca de UI
 - **TypeScript 5.3.3** - Tipado estático
 - **Vite 5.1.0** - Build tool y dev server
 
 ### UI/UX
+
 - **Ant Design 5.27.2** - Componentes de UI
 - **Tailwind CSS 4.1.10** - Framework de estilos
 - **Framer Motion 11.0.3** - Animaciones
 - **React Icons 5.0.1** - Iconografía
 
 ### Estado y Routing
+
 - **Zustand 5.0.8** - Gestión de estado
 - **React Router DOM 6.22.0** - Enrutamiento
 
 ### Utilidades
+
 - **date-fns 4.1.0** - Manipulación de fechas
 - **jwt-decode 4.0.0** - Decodificación de JWT
 - **zod 3.22.4** - Validación de esquemas
@@ -168,11 +175,13 @@ src/
 ### 1. Autenticación
 
 #### Registro de Usuario
+
 1. Navegar a la página de registro
 2. Completar formulario con datos requeridos
 3. El sistema validará los datos y creará la cuenta
 
 #### Inicio de Sesión
+
 1. Ingresar email y contraseña
 2. El sistema generará tokens JWT
 3. Redirección automática al dashboard
@@ -180,6 +189,7 @@ src/
 ### 2. Gestión de Libros
 
 #### Agregar Libro
+
 1. Ir a "Gestión de Libros"
 2. Hacer clic en "Agregar Libro"
 3. Completar formulario con datos del libro
@@ -187,12 +197,14 @@ src/
 5. Guardar cambios
 
 #### Buscar y Filtrar
+
 1. Usar barra de búsqueda para texto libre
 2. Aplicar filtros por género, editorial, autor
 3. Ordenar por diferentes criterios
 4. Navegar con paginación
 
 #### Editar/Eliminar
+
 1. Hacer clic en "Editar" en la tarjeta del libro
 2. Modificar datos necesarios
 3. Para eliminar, usar botón "Eliminar" con confirmación
@@ -200,12 +212,14 @@ src/
 ### 3. Dashboard de Auditoría
 
 #### Visualizar Logs
+
 1. Acceder al Dashboard desde el menú
 2. Ver logs de todas las operaciones
 3. Filtrar por acción, usuario, fecha
 4. Exportar datos en CSV
 
 #### Exportar Datos
+
 1. Aplicar filtros deseados
 2. Hacer clic en "Exportar Datos"
 3. Descargar archivo CSV generado
@@ -226,11 +240,11 @@ export default {
           50: '#f0f9ff',
           100: '#e0f2fe',
           // ... más colores
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};
 ```
 
 ### Configuración de API
@@ -242,21 +256,21 @@ export const API_CONFIG = {
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-  }
-}
+  },
+};
 ```
 
 ### Gestión de Estado
 
 ```typescript
 // src/store/index.ts
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface AppState {
-  user: User | null
-  theme: 'light' | 'dark'
-  setUser: (user: User | null) => void
-  setTheme: (theme: 'light' | 'dark') => void
+  user: User | null;
+  theme: 'light' | 'dark';
+  setUser: (user: User | null) => void;
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -264,7 +278,7 @@ export const useAppStore = create<AppState>((set) => ({
   theme: 'light',
   setUser: (user) => set({ user }),
   setTheme: (theme) => set({ theme }),
-}))
+}));
 ```
 
 ## 🧪 Testing
@@ -348,8 +362,8 @@ const securityHeaders = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'X-XSS-Protection': '1; mode=block',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
-}
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+};
 ```
 
 ## 📊 Performance
@@ -377,12 +391,14 @@ npm run lighthouse
 ### Problemas Comunes
 
 #### Error de CORS
+
 ```bash
 # Verificar configuración del backend
 # Asegurar que CORS esté habilitado para el dominio del frontend
 ```
 
 #### Error de Autenticación
+
 ```bash
 # Verificar que el token JWT sea válido
 # Comprobar expiración del token
@@ -390,6 +406,7 @@ npm run lighthouse
 ```
 
 #### Error de Build
+
 ```bash
 # Limpiar cache
 rm -rf node_modules package-lock.json
@@ -430,6 +447,7 @@ npm run type-check
 ## 📝 Changelog
 
 ### v1.0.0 (2024-01-XX)
+
 - ✨ Lanzamiento inicial
 - 🎨 Interfaz moderna con Ant Design
 - 🔐 Sistema de autenticación JWT

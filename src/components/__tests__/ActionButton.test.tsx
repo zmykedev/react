@@ -7,7 +7,7 @@ describe('ActionButton', () => {
     icon: 'edit',
     onClick: vi.fn(),
     tooltip: 'Edit item',
-    variant: 'primary' as const
+    variant: 'primary' as const,
   };
 
   beforeEach(() => {
@@ -16,15 +16,15 @@ describe('ActionButton', () => {
 
   it('renders button component', () => {
     render(<ActionButton {...defaultProps} />);
-    
+
     // Just check that the component renders without crashing
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(0);
   });
 
   it('renders with different props', () => {
-    render(<ActionButton {...defaultProps} variant="secondary" />);
-    
+    render(<ActionButton {...defaultProps} variant='secondary' />);
+
     // Just check that the component renders without crashing
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(0);
@@ -32,7 +32,7 @@ describe('ActionButton', () => {
 
   it('renders when disabled', () => {
     render(<ActionButton {...defaultProps} disabled={true} />);
-    
+
     // Just check that the component renders without crashing
     const buttons = screen.queryAllByRole('button');
     expect(buttons.length).toBeGreaterThanOrEqual(0);
