@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
-  Layout,
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Divider,
   Form,
   Input,
-  Button,
-  Typography,
-  Card,
-  Space,
-  Divider,
-  Row,
-  Col,
-  Avatar,
   Progress,
+  Row,
+  Space,
+  Typography,
 } from 'antd';
 import {
-  UserOutlined,
-  LockOutlined,
-  MailOutlined,
-  UserAddOutlined,
   BookOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
+  LockOutlined,
+  MailOutlined,
+  UserAddOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { API_ENDPOINTS } from '../../config/api.ts';
+import { API_ENDPOINTS } from '@/config/api';
 
-const { Content } = Layout;
 const { Title, Text } = Typography;
 const { Password } = Input;
 
@@ -131,6 +129,7 @@ const Register = () => {
         }
       }
     } catch (err) {
+      console.error(err);
       setErrors({ email: 'Error de conexión. Inténtalo de nuevo.' });
     } finally {
       setIsLoading(false);
@@ -142,8 +141,8 @@ const Register = () => {
   };
 
   return (
-    <Layout className='bg-gradient-to-br from-fountain-blue-50 to-fountain-blue-100'>
-      <Content className='flex items-stretch justify-center min-h-screen py-4 px-4'>
+    <div className='gradient-primary min-h-screen'>
+      <div className='flex items-center justify-center p-4 min-h-screen'>
         <Card className='shadow-2xl border-0 flex-grow-0 max-w-md w-full h-full'>
           {/* Header */}
           <div className='text-center mb-8'>
@@ -152,9 +151,6 @@ const Register = () => {
               <Title level={2} className='mb-2 text-fountain-blue-900'>
                 Crear cuenta
               </Title>
-              <Text type='secondary' className='text-fountain-blue-700'>
-                Únete a CMPC-Inventario para gestionar tu biblioteca
-              </Text>
             </Space>
           </div>
 
@@ -305,7 +301,7 @@ const Register = () => {
               <Button
                 type='link'
                 icon={<UserOutlined />}
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/auth/login')}
                 className='text-fountain-blue-600 hover:text-fountain-blue-800 font-medium'
                 size='large'
               >
@@ -314,8 +310,8 @@ const Register = () => {
             </Space>
           </div>
         </Card>
-      </Content>
-    </Layout>
+      </div>
+    </div>
   );
 };
 

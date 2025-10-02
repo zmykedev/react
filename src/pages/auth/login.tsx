@@ -1,29 +1,27 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import {
-  Layout,
+  Alert,
+  Avatar,
+  Button,
+  Card,
+  Checkbox,
+  Divider,
   Form,
   Input,
-  Button,
-  Typography,
-  Card,
   Space,
-  Alert,
-  Divider,
-  Checkbox,
-  Avatar,
+  Typography,
 } from 'antd';
 import {
-  UserOutlined,
+  BookOutlined,
   LockOutlined,
   LoginOutlined,
   UserAddOutlined,
-  BookOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { API_ENDPOINTS } from '@/config/api.ts';
+import { API_ENDPOINTS } from '@/config/api';
 import useStore from '../../store';
 
-const { Content } = Layout;
 const { Title, Text, Link } = Typography;
 const { Password } = Input;
 
@@ -86,6 +84,7 @@ const Login = () => {
         setError(errorData.error || 'Error al iniciar sesión');
       }
     } catch (err) {
+      console.error(err);
       setError('Error de conexión. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
@@ -93,8 +92,8 @@ const Login = () => {
   };
 
   return (
-    <Layout className='min-h-screen gradient-primary'>
-      <Content className='flex items-center justify-center py-8 px-4'>
+    <div className='gradient-primary min-h-screen'>
+      <div className='flex items-center justify-center p-4 min-h-screen'>
         <Card
           className='w-full max-w-md shadow-2xl border-0 card-primary'
           styles={{ body: { padding: '40px' } }}
@@ -106,9 +105,6 @@ const Login = () => {
               <Title level={2} className='mb-2 text-primary'>
                 Bienvenido de vuelta
               </Title>
-              <Text type='secondary' className='text-secondary'>
-                Accede a tu cuenta de CMPC-Inventario
-              </Text>
             </Space>
           </div>
 
@@ -159,7 +155,7 @@ const Login = () => {
             <Form.Item>
               <div className='flex justify-between items-center'>
                 <Checkbox>Recordarme</Checkbox>
-                <Link href='/forgot-password'>¿Olvidaste tu contraseña?</Link>
+                <Link href='/auth/forgot-password'>¿Olvidaste tu contraseña?</Link>
               </div>
             </Form.Item>
 
@@ -192,7 +188,7 @@ const Login = () => {
               <Button
                 type='link'
                 icon={<UserAddOutlined />}
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/auth/register')}
                 className='text-fountain-blue-600 hover:text-fountain-blue-800 font-medium'
                 size='large'
               >
@@ -201,8 +197,8 @@ const Login = () => {
             </Space>
           </div>
         </Card>
-      </Content>
-    </Layout>
+      </div>
+    </div>
   );
 };
 

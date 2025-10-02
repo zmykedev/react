@@ -1,7 +1,7 @@
 // Configuración para desarrollo local vs producción
 const isDevelopment = import.meta.env.DEV;
 const apiBase =
-  (import.meta as any)?.env?.VITE_API_URL ||
+  import.meta?.env?.VITE_API_URL ||
   (isDevelopment
     ? 'http://localhost:3000/api/v1' // Desarrollo local (puerto 3000)
     : 'https://cmpc-backend-production-c95a.up.railway.app/api/v1'); // Producción

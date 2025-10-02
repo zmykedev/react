@@ -1,28 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router';
+import { Avatar, Button, Dropdown, Layout, Space, Switch, Typography } from 'antd';
 import {
-  Layout,
-  Menu,
-  Button,
-  Avatar,
-  Dropdown,
-  Space,
-  Typography,
-  Switch,
-  Divider,
-  Badge,
-} from 'antd';
-import {
-  MenuOutlined,
-  HomeOutlined,
-  BookOutlined,
-  UserOutlined,
-  LogoutOutlined,
-  SunOutlined,
-  MoonOutlined,
-  BellOutlined,
-  SettingOutlined,
   BarChartOutlined,
+  BookOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  MoonOutlined,
+  SunOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import useStore from '../store';
 import { useTheme } from '../contexts/ThemeContext';
@@ -36,7 +23,6 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ userName, userEmail }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { logout, getUser } = useStore();
   const { theme, toggleTheme } = useTheme();
