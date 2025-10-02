@@ -129,6 +129,7 @@ const Register = () => {
         }
       }
     } catch (err) {
+      console.error(err);
       setErrors({ email: 'Error de conexión. Inténtalo de nuevo.' });
     } finally {
       setIsLoading(false);

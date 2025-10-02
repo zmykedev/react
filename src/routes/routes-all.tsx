@@ -1,6 +1,6 @@
-import type {RouteObject} from 'react-router';
-import {Suspense} from 'react';
-import Main from '@/pages/Main.tsx';
+import type { RouteObject } from 'react-router';
+import { Suspense } from 'react';
+import Main from '@/pages/Main';
 
 export const routesAll: RouteObject[] = [
   {

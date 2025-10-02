@@ -1,5 +1,5 @@
-/// <reference types="react" />
-/// <reference types="vite/client" />
+// <reference types="react" />
+// <reference types="vite/client" />
 
 declare module '*.svg' {
   import * as React from 'react';

@@ -1,7 +1,7 @@
 import React from 'react';
 import useStore from '../store';
-import { useNavigate } from 'react-router-dom';
-import { Card, Typography, Button, Space, Alert, Tag } from 'antd';
+import { useNavigate } from 'react-router';
+import { Card, Typography, Button, Space, Alert } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;

@@ -23,7 +23,7 @@ export const useImageWithFallback = ({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const [setAttempts] = useState(0);
 
   const loadImage = (url: string): Promise<string> => {
     return new Promise((resolve, reject) => {

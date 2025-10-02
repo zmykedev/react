@@ -1,8 +1,25 @@
-import {useState} from 'react';
-import {useLocation, useNavigate} from 'react-router';
-import {Alert, Avatar, Button, Card, Checkbox, Divider, Form, Input, Space, Typography,} from 'antd';
-import {BookOutlined, LockOutlined, LoginOutlined, UserAddOutlined, UserOutlined,} from '@ant-design/icons';
-import {API_ENDPOINTS} from '@/config/api.ts';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import {
+  Alert,
+  Avatar,
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  Space,
+  Typography,
+} from 'antd';
+import {
+  BookOutlined,
+  LockOutlined,
+  LoginOutlined,
+  UserAddOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { API_ENDPOINTS } from '@/config/api';
 import useStore from '../../store';
 
 const { Title, Text, Link } = Typography;
@@ -67,6 +84,7 @@ const Login = () => {
         setError(errorData.error || 'Error al iniciar sesión');
       }
     } catch (err) {
+      console.error(err);
       setError('Error de conexión. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
