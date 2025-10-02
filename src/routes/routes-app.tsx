@@ -1,7 +1,11 @@
-import type { RouteObject } from 'react-router';
+import type {RouteObject} from 'react-router';
 import NotFound from '@/views/common/not-found';
 import Layout from '@/views/common/layout';
-import { routesAll } from '@/routes/routes-all';
+import {routesAll} from '@/routes/routes-all';
+import {Suspense} from "react";
+import Login from "@/pages/auth/login.tsx";
+import Register from "@/pages/auth/register.tsx";
+
 
 export const routesApp: RouteObject[] = [
   {
@@ -12,5 +16,21 @@ export const routesApp: RouteObject[] = [
   {
     path: '*',
     element: <NotFound />,
+  },
+  {
+    path: '/auth/login',
+    element: (
+      <Suspense>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/auth/register',
+    element: (
+      <Suspense>
+        <Register />
+      </Suspense>
+    ),
   },
 ];
