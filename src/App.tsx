@@ -11,9 +11,7 @@ import { ProtectedGuestRoute } from './routes/GuestRoutes';
 // Lazy load components for better performance
 const Login = lazy(() => import('./views/common/Login'));
 const Register = lazy(() => import('./views/common/Register'));
-const LandingPage = lazy(() => import('./pages/LandingPage'));
-const BookList = lazy(() => import('./pages/BookList'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
+const LandingPage = lazy(() => import('./pages/Main'));
 const UserProfile = lazy(() => import('./components/UserProfile').then(module => ({ default: module.UserProfile })));
 
 // Loading component for Suspense fallback
