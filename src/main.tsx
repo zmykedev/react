@@ -2,7 +2,7 @@ import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import './index.css';
 import {setupAuthInterceptor} from './utils/authInterceptor';
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter} from "react-router";
 import {Routes} from "@/routes/routes.tsx";
 
 // Setup global auth interceptor for status 498

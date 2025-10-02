@@ -10,7 +10,6 @@ export const routesAll: RouteObject[] = [
   {
     index: true,
     element: (
-      // <Suspense fallback={<Fallback />}>
       <Suspense>
         <Main />
       </Suspense>

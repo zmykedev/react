@@ -1,11 +1,11 @@
-import {Navigate, Outlet} from "react-router-dom"
+import {Navigate, Outlet} from "react-router"
 import useStore from "@/store";
 
 const Layout = () => {
   const {isLoggedIn} = useStore();
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace/>;
+    return <Navigate to="auth/login" replace/>;
   }
 
   return (
