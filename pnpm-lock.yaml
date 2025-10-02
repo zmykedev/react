@@ -44,9 +44,6 @@ importers:
       react-router:
         specifier: ^7.9.3
         version: 7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom:
-        specifier: ^6.22.0
-        version: 6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-scan:
         specifier: ^0.3.4
         version: 0.3.6(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(rollup@4.50.0)
@@ -63,6 +60,9 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@18.3.24)(react@18.3.1)
     devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.36.0
       '@tailwindcss/postcss':
         specifier: ^4.1.10
         version: 4.1.12
@@ -669,6 +669,10 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@eslint/js@9.36.0':
+    resolution: {integrity: sha512-uhCbYtYynH30iZErszX78U+nR3pJU3RHGQ57NXy5QupD4SBVwDeU8TNBy+MjMngc1UyIW9noKqsRqfjQTBU2dw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@heroicons/react@2.2.0':
     resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
@@ -4047,6 +4051,8 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
+  '@eslint/js@9.36.0': {}
+
   '@heroicons/react@2.2.0(react@18.3.1)':
     dependencies:
       react: 18.3.1
@@ -4215,7 +4221,8 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.3.1
 
-  '@remix-run/router@1.23.0': {}
+  '@remix-run/router@1.23.0':
+    optional: true
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -6657,11 +6664,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router: 6.30.1(react@18.3.1)
+    optional: true
 
   react-router@6.30.1(react@18.3.1):
     dependencies:
       '@remix-run/router': 1.23.0
       react: 18.3.1
+    optional: true
 
   react-router@7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
