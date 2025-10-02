@@ -1,16 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
+import {Suspense, lazy, type PropsWithChildren} from 'react';
 import { Spin } from 'antd';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { Layout } from './views/common/Layout';
+import Layout from './views/common/layout';
 import Navbar from './components/Navbar';
 import useStore from './store';
 import { AntdConfigProvider } from './providers/AntdConfigProvider';
-import { ProtectedGuestRoute } from './routes/GuestRoutes';
 
 // Lazy load components for better performance
-const Login = lazy(() => import('./views/common/Login'));
-const Register = lazy(() => import('./views/common/Register'));
 const LandingPage = lazy(() => import('./pages/Main'));
 const UserProfile = lazy(() => import('./components/UserProfile').then(module => ({ default: module.UserProfile })));
 
@@ -21,7 +18,7 @@ const LoadingSpinner = () => (
   </div>
 );
 
-function ProtectedAuthRoute({ children }: { children: React.ReactNode }) {
+function ProtectedAuthRoute({ children }: PropsWithChildren) {
   const { isLoggedIn } = useStore();
   
   if (isLoggedIn) {
@@ -69,8 +66,6 @@ function AppContent() {
           {isLoggedIn ? (
             <>
               <Route path="/profile" element={<UserProfile />} />
-              <Route path="/books" element={<BookList />} />
-              <Route path="/dashboard" element={<Dashboard />} />
             </>
           ) : (
             <Route path="*" element={<Navigate to="/login" />} />

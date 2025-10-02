@@ -1,14 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
 import './index.css';
-import App from './App.tsx'
-import { setupAuthInterceptor } from './utils/authInterceptor';
+import {setupAuthInterceptor} from './utils/authInterceptor';
+import {BrowserRouter} from "react-router-dom";
+import {Routes} from "@/routes/routes.tsx";
 
 // Setup global auth interceptor for status 498
 setupAuthInterceptor();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes />
+    </BrowserRouter>
   </StrictMode>,
 )

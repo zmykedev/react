@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -31,5 +32,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'antd', 'framer-motion', 'zustand'],
+  },
+  resolve: {
+      alias: {
+          '@': path.resolve(__dirname, 'src'),
+      },
   },
 })

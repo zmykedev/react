@@ -7,11 +7,7 @@ interface ProtectedAuthRouteProps {
 }
 
 export function ProtectedAuthRoute({ children }: ProtectedAuthRouteProps) {
-  const { isLoggedIn } = useStore();
-  
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
-  }
+
   
   return <>{children}</>;
 }

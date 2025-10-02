@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Layout, 
@@ -20,7 +20,7 @@ import {
   UserAddOutlined,
   BookOutlined
 } from '@ant-design/icons';
-import { API_ENDPOINTS } from '../../config/api';
+import { API_ENDPOINTS } from '@/config/api.ts';
 import useStore from '../../store';
 
 const { Content } = Layout;
@@ -32,7 +32,7 @@ interface FormData {
   password: string;
 }
 
-const Login: React.FC = () => {
+const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setSession } = useStore();
@@ -224,4 +224,3 @@ const Login: React.FC = () => {
 
 export default Login;
 
- 

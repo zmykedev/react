@@ -23,7 +23,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined
 } from '@ant-design/icons';
-import { API_ENDPOINTS } from '../../config/api';
+import { API_ENDPOINTS } from '../../config/api.ts';
 
 const { Content } = Layout;
 const { Title, Text} = Typography;
@@ -43,7 +43,7 @@ const PASSWORD_RULES = [
   { test: (p: string) => /[@$!%*?&]/.test(p), text: "Un carácter especial" }
 ];
 
-const Register: React.FC = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   
